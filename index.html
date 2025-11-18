@@ -410,19 +410,6 @@
             opacity: 0.8;
             cursor: none;
             transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .volume-icon.muted::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: white;
-            transform: rotate(-45deg) translateY(-50%);
-            opacity: 0.8;
         }
 
         .volume-slider {
@@ -763,14 +750,14 @@
         
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Custom cursor - ИСПРАВЛЕННЫЙ
+        // Custom cursor
         const cursor = document.querySelector('.cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // Snowflake creation - ПЛАВНЫЕ СНЕЖИНКИ СРАЗУ ЛЕТЯТ ВНИЗ
+        // Snowflake creation
         function createSnowflake(x, y) {
             const snowflake = document.createElement('div');
             snowflake.className = 'snowflake';
@@ -781,14 +768,12 @@
             const size = Math.random() * 8 + 4;
             snowflake.style.fontSize = size + 'px';
             
-            // Плавная анимация без задержки
             const duration = Math.random() * 3000 + 2000;
             
             snowflake.style.animation = `snowFall ${duration}ms linear forwards`;
             
             document.body.appendChild(snowflake);
             
-            // Удаляем снежинку после анимации
             setTimeout(() => {
                 if (snowflake.parentNode) {
                     snowflake.parentNode.removeChild(snowflake);
@@ -796,11 +781,11 @@
             }, duration);
         }
 
-        // Cursor snowflakes - снежинки сразу летят вниз
+        // Cursor snowflakes
         let lastSnowflakeTime = 0;
         document.addEventListener('mousemove', (e) => {
             const now = Date.now();
-            if (now - lastSnowflakeTime > 50) { // Чаще создаем снежинки
+            if (now - lastSnowflakeTime > 50) {
                 createSnowflake(
                     e.clientX + (Math.random() - 0.5) * 30, 
                     e.clientY + (Math.random() - 0.5) * 20
@@ -845,21 +830,22 @@
         const nextBtn = document.getElementById('nextBtn');
         const viewsCount = document.getElementById('viewsCount');
 
-        // Упрощенный счетчик просмотров
+        // ИСПРАВЛЕННЫЙ счетчик просмотров
         async function updateViewCounter() {
             try {
-                let views = parseInt(localStorage.getItem('profileViews')) || 0;
-                const visitorId = localStorage.getItem('visitorId');
-                
-                if (!visitorId) {
-                    // Новый посетитель
-                    const newVisitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem('visitorId', newVisitorId);
+                // Используем sessionStorage для отслеживания в рамках одной сессии
+                if (!sessionStorage.getItem('hasVisited')) {
+                    // Новый посетитель в этой сессии
+                    let views = parseInt(localStorage.getItem('profileViews')) || 0;
                     views++;
                     localStorage.setItem('profileViews', views.toString());
+                    sessionStorage.setItem('hasVisited', 'true');
+                    viewsCount.textContent = views;
+                } else {
+                    // Уже был в этой сессии, просто показываем текущее значение
+                    let views = parseInt(localStorage.getItem('profileViews')) || 1;
+                    viewsCount.textContent = views;
                 }
-                
-                viewsCount.textContent = views;
                 
             } catch (error) {
                 console.error('Error updating view counter:', error);
@@ -887,23 +873,19 @@
         let currentSongIndex = 0;
         let isPlaying = false;
         let isMuted = false;
-        let lastVolume = 0.7; // Сохраняем последнюю громкость
+        let lastVolume = 0.7;
         audio.volume = 0.7;
 
-        // Функция для обновления иконки громкости
+        // Функция для обновления иконки громкости - ИСПРАВЛЕННАЯ (без зачеркивания)
         function updateVolumeIcon(volume) {
             if (isMuted || volume === 0) {
                 volumeIcon.textContent = '🔇';
-                volumeIcon.classList.add('muted');
             } else if (volume <= 0.1) {
                 volumeIcon.textContent = '🔈';
-                volumeIcon.classList.remove('muted');
             } else if (volume <= 0.5) {
                 volumeIcon.textContent = '🔉';
-                volumeIcon.classList.remove('muted');
             } else {
                 volumeIcon.textContent = '🔊';
-                volumeIcon.classList.remove('muted');
             }
         }
 
@@ -1085,7 +1067,7 @@
             page404.style.display = 'none';
         });
 
-        // Loading countdown - ИСПРАВЛЕННЫЙ
+        // Loading countdown
         let timeLeft = 2;
         const countdown = setInterval(() => {
             timeLeft--;
