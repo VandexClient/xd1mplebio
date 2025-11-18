@@ -873,7 +873,7 @@
         const nextBtn = document.getElementById('nextBtn');
         const viewsCount = document.getElementById('viewsCount');
 
-        // Supabase view counter
+        // Supabase view counter - ИСПРАВЛЕННАЯ ВЕРСИЯ
         async function updateViewCounter() {
             try {
                 // Check if user already visited in this session
@@ -882,31 +882,65 @@
                     const { data, error } = await supabaseClient
                         .from('views')
                         .select('count')
+                        .eq('id', 1)
                         .single();
                     
                     if (!error && data) {
                         viewsCount.textContent = data.count;
+                    } else {
+                        // If no data, set default
+                        viewsCount.textContent = '1';
                     }
                     return;
                 }
 
                 // First visit in this session - increment count
-                const { data, error } = await supabaseClient
-                    .rpc('increment_views');
-                
-                if (!error && data) {
-                    viewsCount.textContent = data;
-                    sessionStorage.setItem('hasVisited', 'true');
+                // First try to get current count
+                const { data: existingData, error: fetchError } = await supabaseClient
+                    .from('views')
+                    .select('count')
+                    .eq('id', 1)
+                    .single();
+
+                let newCount = 1;
+
+                if (fetchError || !existingData) {
+                    // No record exists, create first record
+                    const { data: insertData, error: insertError } = await supabaseClient
+                        .from('views')
+                        .insert([{ id: 1, count: 1 }])
+                        .select();
+                    
+                    if (!insertError && insertData) {
+                        newCount = 1;
+                    }
+                } else {
+                    // Record exists, increment count
+                    newCount = existingData.count + 1;
+                    const { data: updateData, error: updateError } = await supabaseClient
+                        .from('views')
+                        .update({ count: newCount })
+                        .eq('id', 1)
+                        .select();
+                    
+                    if (updateError) {
+                        console.error('Update error:', updateError);
+                        newCount = existingData.count;
+                    }
                 }
+
+                viewsCount.textContent = newCount;
+                sessionStorage.setItem('hasVisited', 'true');
+                
             } catch (error) {
                 console.error('Error updating view counter:', error);
                 // Fallback to localStorage
-                let views = localStorage.getItem('profileViews') || 1;
+                let views = parseInt(localStorage.getItem('profileViews')) || 1;
                 if (!sessionStorage.getItem('hasVisited')) {
                     views++;
                     sessionStorage.setItem('hasVisited', 'true');
                 }
-                localStorage.setItem('profileViews', views);
+                localStorage.setItem('profileViews', views.toString());
                 viewsCount.textContent = views;
             }
         }
