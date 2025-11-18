@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xd1mple | bio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #000;
+            font-family: 'Montserrat', Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        /* Background with parallax effect */
+        .background {
+            position: fixed;
+            inset: -10px;
+            background: url('https://static.wikia.nocookie.net/29886dd8-00b5-41b0-b247-59a5e0b146a2/scale-to-width/755') center/cover;
+            filter: blur(8px) brightness(0.3);
+            z-index: -1;
+            transition: transform 0.2s ease-out;
+        }
+
+        /* Loading screen */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 100, 255, 0.1);
+            border-top-color: #0066ff;
+            border-right-color: #0066ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 100, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            color: #0066ff;
+            text-shadow: 0 0 10px #0066ff;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: textPulse 2s infinite;
+        }
+
+        /* Click anywhere prompt */
+        .click-anywhere {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 100, 255, 0.3);
+            color: #0066ff;
+            font-size: 1.3rem;
+            text-shadow: 0 0 10px #0066ff;
+            animation: pulse 2s infinite;
+            z-index: 90;
+            font-weight: 600;
+            cursor: default;
+        }
+
+        /* Main content - improved profile card */
+        .main-content {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 100%);
+            text-align: center;
+            z-index: 80;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .main-content.show {
+            animation: slideUp 1s forwards;
+        }
+
+        .profile-card {
+            background: rgba(15, 15, 15, 0.9);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            animation: float 4s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(0, 100, 255, 0.5);
+            border: 3px solid rgba(0, 100, 255, 0.4);
+            display: block;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            color: #0066ff;
+            text-shadow: 0 0 10px #0066ff;
+            margin-bottom: 0.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .link {
+            padding: 0.9rem 1.2rem;
+            background: rgba(25, 25, 25, 0.9);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        /* YouTube button - red */
+        .link.youtube {
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .link.youtube:hover {
+            background: rgba(255, 0, 0, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 0.6);
+        }
+
+        /* Steam button - dark blue */
+        .link.steam {
+            border-color: rgba(26, 75, 114, 0.3);
+        }
+
+        .link.steam:hover {
+            background: rgba(26, 75, 114, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 75, 114, 0.3);
+            border-color: rgba(26, 75, 114, 0.6);
+        }
+
+        /* Spotify button - green */
+        .link.spotify {
+            border-color: rgba(29, 185, 84, 0.3);
+        }
+
+        .link.spotify:hover {
+            background: rgba(29, 185, 84, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
+            border-color: rgba(29, 185, 84, 0.6);
+        }
+
+        .link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .link:hover::before {
+            left: 100%;
+        }
+
+        .link-icon {
+            width: 22px;
+            height: 22px;
+            transition: all 0.3s;
+        }
+
+        /* YouTube icon - red */
+        .link.youtube .link-icon {
+            filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.5));
+        }
+
+        .link.youtube:hover .link-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.7));
+        }
+
+        /* Steam icon - dark blue */
+        .link.steam .link-icon {
+            filter: drop-shadow(0 0 3px rgba(26, 75, 114, 0.5));
+        }
+
+        .link.steam:hover .link-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 5px rgba(26, 75, 114, 0.7));
+        }
+
+        /* Spotify icon - green */
+        .link.spotify .link-icon {
+            filter: drop-shadow(0 0 3px rgba(29, 185, 84, 0.5));
+        }
+
+        .link.spotify:hover .link-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 5px rgba(29, 185, 84, 0.7));
+        }
+
+        /* Music player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(15, 15, 15, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+            border: 1px solid rgba(0, 100, 255, 0.3);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            width: 280px;
+        }
+
+        .music-player:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .player-title {
+            font-size: 0.9rem;
+            color: #0066ff;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(0, 100, 255, 0.5);
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-toggle {
+            background: rgba(0, 100, 255, 0.2);
+            border: none;
+            color: #0066ff;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+            text-shadow: 0 0 8px rgba(0, 100, 255, 0.5);
+            font-weight: bold;
+        }
+
+        .music-toggle:hover {
+            background: rgba(0, 100, 255, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 100, 255, 0.4);
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #0066ff, #3399ff);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+            position: relative;
+        }
+
+        .progress::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #0066ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 100, 255, 0.8);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .progress-bar:hover .progress::after {
+            opacity: 1;
+        }
+
+        .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .volume-icon {
+            color: #0066ff;
+            font-size: 1.1rem;
+            width: 20px;
+        }
+
+        .volume-slider {
+            flex-grow: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-level {
+            height: 100%;
+            background: linear-gradient(90deg, #0066ff, #3399ff);
+            border-radius: 3px;
+            width: 70%;
+            transition: width 0.2s ease;
+        }
+
+        .volume-slider:hover .volume-level {
+            background: linear-gradient(90deg, #3399ff, #66b2ff);
+        }
+
+        /* Animated dots */
+        .dot {
+            position: fixed;
+            background: #0066ff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            box-shadow: 0 0 10px #0066ff;
+        }
+
+        /* 404 Page */
+        .page-404 {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #888;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 1rem;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+
+        .back-home {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 100, 255, 0.1);
+            color: #0066ff;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 100, 255, 0.3);
+            transition: all 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .back-home:hover {
+            background: rgba(0, 100, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 100, 255, 0.3);
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100%); opacity: 0; }
+            to { transform: translate(-50%, -50%); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .profile-card {
+                padding: 1.8rem 1.2rem;
+                border-radius: 18px;
+            }
+            
+            .title {
+                font-size: 1.9rem;
+            }
+            
+            .link {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .link-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .music-player {
+                width: 90%;
+                max-width: 280px;
+                right: 5%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .profile-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .title {
+                font-size: 1.7rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .link {
+                padding: 0.7rem 0.9rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading: 2s</div>
+    </div>
+
+    <div class="click-anywhere">Click anywhere!</div>
+
+    <div class="main-content">
+        <div class="profile-card">
+            <img src="https://i.postimg.cc/TY4RdSS4/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="xd1mple" class="logo">
+            <h1 class="title">xd1mple</h1>
+            <p class="subtitle">unknown</p>
+            
+            <div class="links">
+                <a href="https://www.youtube.com/@tapweenq" target="_blank" class="link youtube">
+                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                    </svg>
+                    YouTube
+                </a>
+                <a href="https://steamcommunity.com/id/bleyr9x" target="_blank" class="link steam">
+                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.979 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.58 0 11.979 0zM7.203 17.282c-1.337-.365-2.402-1.258-3.072-2.441 1.119.324 2.293.497 3.507.497 1.214 0 2.388-.173 3.507-.497-.67 1.183-1.735 2.076-3.072 2.441h-.87zm12.319-5.303c0 3.314-2.686 6-6 6s-6-2.686-6-6 2.686-6 6-6 6 2.686 6 6zm-10 0c0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4-4 1.791-4 4z"/>
+                    </svg>
+                    Steam
+                </a>
+                <a href="https://open.spotify.com/user/xd1mple" target="_blank" class="link spotify">
+                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-2-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                    </svg>
+                    Spotify
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Music player -->
+    <div class="music-player">
+        <div class="player-header">
+            <div class="player-title">Now Playing</div>
+        </div>
+        
+        <div class="music-controls">
+            <button class="music-toggle" id="musicToggle">⏸</button>
+            <div class="progress-container">
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="volume-controls">
+            <div class="volume-icon">🔊</div>
+            <div class="volume-slider" id="volumeSlider">
+                <div class="volume-level" id="volumeLevel"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 404 Page -->
+    <div class="page-404" id="page404">
+        <div class="error-code">404</div>
+        <div class="error-message">Page Not Found</div>
+        <a href="#" class="back-home" id="backHome">Back to Home</a>
+    </div>
+
+    <script>
+        const loading = document.querySelector('.loading');
+        const loadingText = document.querySelector('.loading-text');
+        const clickAnywhere = document.querySelector('.click-anywhere');
+        const mainContent = document.querySelector('.main-content');
+        const background = document.querySelector('.background');
+        const musicToggle = document.getElementById('musicToggle');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        const currentTime = document.getElementById('currentTime');
+        const totalTime = document.getElementById('totalTime');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeLevel = document.getElementById('volumeLevel');
+        const page404 = document.getElementById('page404');
+        const backHome = document.getElementById('backHome');
+
+        // Prevent image dragging and text selection
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Audio setup
+        const audio = new Audio('https://storage4.lightaudio.ru/dm/39a2f65d/3bb509b0/BRZ%2C%20BXZX%20%E2%80%94%20%D0%A1%D0%BD%D0%B5%D0%B3%20-%20Hardstyle%20-%20Slowed.mp3');
+        audio.loop = true;
+        let isPlaying = false;
+        audio.volume = 0.7;
+
+        // Format time function
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            if (audio.duration) {
+                const progressPercent = (audio.currentTime / audio.duration) * 100;
+                progress.style.width = `${progressPercent}%`;
+                currentTime.textContent = formatTime(audio.currentTime);
+                totalTime.textContent = formatTime(audio.duration);
+            }
+        }
+
+        // Set progress on click - FIXED VERSION
+        let isProgressDragging = false;
+        
+        progressBar.addEventListener('mousedown', (e) => {
+            isProgressDragging = true;
+            setProgress(e);
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isProgressDragging) {
+                setProgress(e);
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isProgressDragging = false;
+        });
+        
+        progressBar.addEventListener('click', (e) => {
+            setProgress(e);
+        });
+        
+        function setProgress(e) {
+            if (audio.duration) {
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                const newTime = percent * audio.duration;
+                
+                // Set the new time without restarting
+                audio.currentTime = newTime;
+                
+                // If audio was playing, continue playing
+                if (isPlaying && audio.paused) {
+                    audio.play();
+                }
+            }
+        }
+
+        // Volume control with smooth transition
+        let isVolumeDragging = false;
+        
+        volumeSlider.addEventListener('mousedown', (e) => {
+            isVolumeDragging = true;
+            updateVolume(e);
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isVolumeDragging) {
+                updateVolume(e);
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isVolumeDragging = false;
+        });
+        
+        volumeSlider.addEventListener('click', (e) => {
+            updateVolume(e);
+        });
+        
+        function updateVolume(e) {
+            const rect = volumeSlider.getBoundingClientRect();
+            let percent = (e.clientX - rect.left) / rect.width;
+            percent = Math.max(0, Math.min(1, percent));
+            
+            // Smooth volume transition
+            const targetVolume = percent;
+            const currentVolume = audio.volume;
+            const step = (targetVolume - currentVolume) * 0.3;
+            
+            const smoothVolumeChange = () => {
+                if (Math.abs(audio.volume - targetVolume) > 0.01) {
+                    audio.volume += step;
+                    volumeLevel.style.width = `${audio.volume * 100}%`;
+                    requestAnimationFrame(smoothVolumeChange);
+                } else {
+                    audio.volume = targetVolume;
+                    volumeLevel.style.width = `${targetVolume * 100}%`;
+                }
+            };
+            
+            smoothVolumeChange();
+        }
+
+        // Update volume level display
+        volumeLevel.style.width = `${audio.volume * 100}%`;
+
+        // Music toggle functionality
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                audio.pause();
+                musicToggle.textContent = '▶';
+            } else {
+                audio.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                });
+                musicToggle.textContent = '⏸';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Audio event listeners
+        audio.addEventListener('loadedmetadata', () => {
+            totalTime.textContent = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', updateProgress);
+
+        audio.addEventListener('ended', () => {
+            musicToggle.textContent = '▶';
+            isPlaying = false;
+        });
+
+        // 404 page functionality
+        backHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            page404.style.display = 'none';
+        });
+
+        // Simulate 404 page for demonstration
+        setTimeout(() => {
+            // Uncomment the line below to show 404 page automatically for demo
+            // page404.style.display = 'flex';
+        }, 5000);
+
+        // Loading countdown
+        let timeLeft = 2;
+        const countdown = setInterval(() => {
+            timeLeft--;
+            loadingText.textContent = `Loading: ${timeLeft}s`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                loading.style.display = 'none';
+                clickAnywhere.style.display = 'block';
+            }
+        }, 1000);
+
+        // Click to enter
+        let hasClicked = false;
+        document.addEventListener('click', (e) => {
+            if (!hasClicked && timeLeft <= 0 && !e.target.closest('a') && !e.target.closest('.music-player')) {
+                hasClicked = true;
+                clickAnywhere.style.display = 'none';
+                mainContent.style.display = 'block';
+                mainContent.classList.add('show');
+                
+                // Auto-play music after click (with user interaction)
+                if (!isPlaying) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        musicToggle.textContent = '⏸';
+                    }).catch(e => {
+                        console.log("Auto-play failed:", e);
+                    });
+                }
+            }
+        });
+
+        // Parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+            background.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+
+        // Animated dots
+        function createDot() {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            
+            const size = Math.random() * 5 + 3;
+            dot.style.width = `${size}px`;
+            dot.style.height = `${size}px`;
+            
+            dot.style.left = `${Math.random() * 100}vw`;
+            dot.style.top = '-10px';
+            
+            document.body.appendChild(dot);
+
+            const duration = Math.random() * 3000 + 2000;
+            const animation = dot.animate([
+                { transform: 'translateY(0) translateX(0)', opacity: 1 },
+                { transform: `translateY(${window.innerHeight + 10}px) translateX(${(Math.random() - 0.5) * 200}px)`, opacity: 0 }
+            ], {
+                duration,
+                easing: 'linear'
+            });
+
+            animation.onfinish = () => dot.remove();
+        }
+
+        setInterval(createDot, 300);
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createDot, Math.random() * 1000);
+        }
+    </script>
+</body>
+</html>
