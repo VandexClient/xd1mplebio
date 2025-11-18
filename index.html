@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xd1mple | bio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚫</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Reset and base styles */
         * {
@@ -29,7 +31,19 @@
             font-family: 'Montserrat', Arial, sans-serif;
             color: white;
             overflow: hidden;
-            cursor: default;
+            cursor: none;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
         }
 
         /* Background with parallax effect */
@@ -37,8 +51,8 @@
             position: fixed;
             inset: -10px;
             background: url('https://static.wikia.nocookie.net/29886dd8-00b5-41b0-b247-59a5e0b146a2/scale-to-width/755') center/cover;
-            filter: blur(8px) brightness(0.3);
-            z-index: -1;
+            filter: blur(12px) brightness(0.2);
+            z-index: -2;
             transition: transform 0.2s ease-out;
         }
 
@@ -59,19 +73,19 @@
         .spinner {
             width: 50px;
             height: 50px;
-            border: 4px solid rgba(0, 100, 255, 0.1);
-            border-top-color: #0066ff;
-            border-right-color: #0066ff;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #ffffff;
+            border-right-color: #ffffff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            box-shadow: 0 0 20px rgba(0, 100, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(5px);
         }
 
         .loading-text {
             font-size: 1.1rem;
-            color: #0066ff;
-            text-shadow: 0 0 10px #0066ff;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ffffff;
             font-weight: 600;
             letter-spacing: 1px;
             animation: textPulse 2s infinite;
@@ -87,14 +101,14 @@
             background: rgba(0, 0, 0, 0.8);
             padding: 1rem 2rem;
             border-radius: 12px;
-            border: 2px solid rgba(0, 100, 255, 0.3);
-            color: #0066ff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
             font-size: 1.3rem;
-            text-shadow: 0 0 10px #0066ff;
+            text-shadow: 0 0 10px #ffffff;
             animation: pulse 2s infinite;
             z-index: 90;
             font-weight: 600;
-            cursor: default;
+            cursor: none;
         }
 
         /* Main content - improved profile card */
@@ -115,14 +129,40 @@
         }
 
         .profile-card {
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(20, 20, 20, 0.85);
             border-radius: 20px;
             padding: 2rem 1.5rem;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
             position: relative;
             overflow: hidden;
+        }
+
+        .profile-info {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .views-counter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .eye-icon {
+            font-size: 0.9rem;
         }
 
         .logo {
@@ -131,8 +171,8 @@
             border-radius: 50%;
             margin: 0 auto 1.2rem;
             animation: float 4s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(0, 100, 255, 0.5);
-            border: 3px solid rgba(0, 100, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             display: block;
             object-fit: cover;
             pointer-events: none;
@@ -140,8 +180,8 @@
 
         .title {
             font-size: 2.2rem;
-            color: #0066ff;
-            text-shadow: 0 0 10px #0066ff;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ffffff;
             margin-bottom: 0.4rem;
             font-weight: 700;
             letter-spacing: 1px;
@@ -164,7 +204,7 @@
 
         .link {
             padding: 0.9rem 1.2rem;
-            background: rgba(25, 25, 25, 0.9);
+            background: rgba(30, 30, 30, 0.9);
             color: white;
             text-decoration: none;
             border-radius: 10px;
@@ -177,8 +217,8 @@
             gap: 12px;
             font-weight: 500;
             font-size: 0.95rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            cursor: none;
         }
 
         /* YouTube button - red */
@@ -273,18 +313,19 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(15, 15, 15, 0.95);
+            background: rgba(20, 20, 20, 0.95);
             border-radius: 15px;
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             z-index: 100;
-            border: 1px solid rgba(0, 100, 255, 0.3);
-            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
             transition: all 0.3s;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
             width: 280px;
+            cursor: none;
         }
 
         .music-player:hover {
@@ -301,9 +342,18 @@
 
         .player-title {
             font-size: 0.9rem;
-            color: #0066ff;
+            color: #ffffff;
             font-weight: 600;
-            text-shadow: 0 0 8px rgba(0, 100, 255, 0.5);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .song-title {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .music-controls {
@@ -313,11 +363,11 @@
         }
 
         .music-toggle {
-            background: rgba(0, 100, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            color: #0066ff;
+            color: #ffffff;
             font-size: 1rem;
-            cursor: pointer;
+            cursor: none;
             width: 36px;
             height: 36px;
             display: flex;
@@ -325,14 +375,14 @@
             justify-content: center;
             border-radius: 50%;
             transition: all 0.3s;
-            text-shadow: 0 0 8px rgba(0, 100, 255, 0.5);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
             font-weight: bold;
         }
 
         .music-toggle:hover {
-            background: rgba(0, 100, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(0, 100, 255, 0.4);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
 
         .progress-container {
@@ -355,13 +405,13 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
             overflow: hidden;
-            cursor: pointer;
+            cursor: none;
             position: relative;
         }
 
         .progress {
             height: 100%;
-            background: linear-gradient(90deg, #0066ff, #3399ff);
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
             border-radius: 3px;
             width: 0%;
             transition: width 0.1s;
@@ -376,9 +426,9 @@
             transform: translateY(-50%);
             width: 12px;
             height: 12px;
-            background: #0066ff;
+            background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 100, 255, 0.8);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
             opacity: 0;
             transition: opacity 0.2s;
         }
@@ -395,9 +445,10 @@
         }
 
         .volume-icon {
-            color: #0066ff;
+            color: white;
             font-size: 1.1rem;
             width: 20px;
+            filter: brightness(1);
         }
 
         .volume-slider {
@@ -405,30 +456,76 @@
             height: 5px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
-            cursor: pointer;
+            cursor: none;
             position: relative;
         }
 
         .volume-level {
             height: 100%;
-            background: linear-gradient(90deg, #0066ff, #3399ff);
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
             border-radius: 3px;
             width: 70%;
-            transition: width 0.2s ease;
+            transition: width 0.1s ease;
         }
 
         .volume-slider:hover .volume-level {
-            background: linear-gradient(90deg, #3399ff, #66b2ff);
+            background: linear-gradient(90deg, #e0e0e0, #c0c0c0);
         }
 
-        /* Animated dots */
-        .dot {
+        /* Song navigation - маленькие кнопки */
+        .song-navigation {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            cursor: none;
+            transition: all 0.2s;
+            text-align: center;
+            padding: 6px 8px;
+            min-width: 35px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Snowflakes */
+        .snowflake {
             position: fixed;
-            background: #0066ff;
-            border-radius: 50%;
+            color: white;
+            font-size: 1rem;
             pointer-events: none;
             z-index: -1;
-            box-shadow: 0 0 10px #0066ff;
+            user-select: none;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        .background-snowflake {
+            position: fixed;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: -1;
+            user-select: none;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
 
         /* 404 Page */
@@ -446,6 +543,7 @@
             align-items: center;
             text-align: center;
             color: #888;
+            cursor: none;
         }
 
         .error-code {
@@ -464,20 +562,20 @@
 
         .back-home {
             padding: 0.8rem 1.5rem;
-            background: rgba(0, 100, 255, 0.1);
-            color: #0066ff;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
             text-decoration: none;
             border-radius: 8px;
-            border: 1px solid rgba(0, 100, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s;
             font-weight: 500;
-            cursor: pointer;
+            cursor: none;
         }
 
         .back-home:hover {
-            background: rgba(0, 100, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 100, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
 
         /* Animations */
@@ -503,6 +601,17 @@
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+
+        @keyframes snowFall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         /* Responsive adjustments */
@@ -531,6 +640,17 @@
                 max-width: 280px;
                 right: 5%;
             }
+
+            .song-navigation {
+                gap: 6px;
+            }
+
+            .nav-btn {
+                padding: 5px 7px;
+                min-width: 32px;
+                height: 28px;
+                font-size: 0.75rem;
+            }
         }
 
         @media (max-width: 400px) {
@@ -550,10 +670,22 @@
                 padding: 0.7rem 0.9rem;
                 font-size: 0.85rem;
             }
+
+            .song-navigation {
+                gap: 5px;
+            }
+
+            .nav-btn {
+                padding: 4px 6px;
+                min-width: 30px;
+                height: 26px;
+                font-size: 0.7rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="cursor"></div>
     <div class="background"></div>
     
     <div class="loading">
@@ -561,10 +693,16 @@
         <div class="loading-text">Loading: 2s</div>
     </div>
 
-    <div class="click-anywhere">Click anywhere!</div>
+    <div class="click-anywhere">click..</div>
 
     <div class="main-content">
         <div class="profile-card">
+            <div class="profile-info">
+                <div class="views-counter">
+                    <span class="eye-icon">👁</span>
+                    <span id="viewsCount">0</span>
+                </div>
+            </div>
             <img src="https://i.postimg.cc/TY4RdSS4/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="xd1mple" class="logo">
             <h1 class="title">xd1mple</h1>
             <p class="subtitle">unknown</p>
@@ -595,8 +733,10 @@
     <!-- Music player -->
     <div class="music-player">
         <div class="player-header">
-            <div class="player-title">Now Playing</div>
+            <div class="player-title">Now playing:</div>
         </div>
+        
+        <div class="song-title" id="songTitle">My First Song</div>
         
         <div class="music-controls">
             <button class="music-toggle" id="musicToggle">⏸</button>
@@ -609,6 +749,11 @@
                     <div class="progress" id="progress"></div>
                 </div>
             </div>
+        </div>
+        
+        <div class="song-navigation">
+            <button class="nav-btn" id="prevBtn">◀</button>
+            <button class="nav-btn" id="nextBtn">▶</button>
         </div>
         
         <div class="volume-controls">
@@ -627,6 +772,88 @@
     </div>
 
     <script>
+        // Supabase configuration
+        const supabaseUrl = 'https://sfrdsvcswqelifkqpcem.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmcmRzdmNzd3FlbGlma3FwY2VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTM5ODEsImV4cCI6MjA3OTAyOTk4MX0.jYqgJOMgnYzYRx05LF_JHlxf4OfOdsL3zUm5IQo_IT8';
+        
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Snowflake creation - ПЛАВНАЯ анимация
+        function createSnowflake(x, y, isBackground = false) {
+            const snowflake = document.createElement('div');
+            snowflake.className = isBackground ? 'background-snowflake' : 'snowflake';
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = x + 'px';
+            snowflake.style.top = y + 'px';
+            
+            const size = isBackground ? Math.random() * 12 + 8 : Math.random() * 10 + 6;
+            snowflake.style.fontSize = size + 'px';
+            
+            // Плавная анимация - 3-5 секунд
+            const duration = Math.random() * 2000 + 3000;
+            const delay = Math.random() * 500;
+            
+            const animation = snowflake.animate([
+                { 
+                    transform: `translateY(-20px) rotate(0deg)`,
+                    opacity: isBackground ? 0.6 : 1
+                },
+                { 
+                    transform: `translateY(${window.innerHeight + 50}px) rotate(720deg)`,
+                    opacity: 0
+                }
+            ], {
+                duration: duration,
+                delay: delay,
+                easing: 'cubic-bezier(0.3, 0, 0.7, 1)' // Очень плавное падение
+            });
+            
+            document.body.appendChild(snowflake);
+            
+            animation.onfinish = () => {
+                if (snowflake.parentNode) {
+                    snowflake.parentNode.removeChild(snowflake);
+                }
+            };
+        }
+
+        // Background snowflakes - больше и виднее
+        function createBackgroundSnowflakes() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    createSnowflake(
+                        Math.random() * window.innerWidth,
+                        Math.random() * -50,
+                        true
+                    );
+                }, Math.random() * 2000);
+            }
+        }
+
+        // Cursor snowflakes - плавное создание
+        let lastSnowflakeTime = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastSnowflakeTime > 100) { // Реже создаем для плавности
+                createSnowflake(
+                    e.clientX + (Math.random() - 0.5) * 40, 
+                    e.clientY + (Math.random() - 0.5) * 30
+                );
+                lastSnowflakeTime = now;
+            }
+        });
+
+        // Initialize background snow
+        createBackgroundSnowflakes();
+        setInterval(createBackgroundSnowflakes, 3000);
+
         const loading = document.querySelector('.loading');
         const loadingText = document.querySelector('.loading-text');
         const clickAnywhere = document.querySelector('.click-anywhere');
@@ -641,23 +868,82 @@
         const volumeLevel = document.getElementById('volumeLevel');
         const page404 = document.getElementById('page404');
         const backHome = document.getElementById('backHome');
+        const songTitle = document.getElementById('songTitle');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const viewsCount = document.getElementById('viewsCount');
 
-        // Prevent image dragging and text selection
-        document.addEventListener('dragstart', (e) => {
-            e.preventDefault();
-            return false;
-        });
-        
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            return false;
-        });
+        // Supabase view counter
+        async function updateViewCounter() {
+            try {
+                // Check if user already visited in this session
+                if (sessionStorage.getItem('hasVisited')) {
+                    // Just get current count
+                    const { data, error } = await supabaseClient
+                        .from('views')
+                        .select('count')
+                        .single();
+                    
+                    if (!error && data) {
+                        viewsCount.textContent = data.count;
+                    }
+                    return;
+                }
 
-        // Audio setup
-        const audio = new Audio('https://storage4.lightaudio.ru/dm/39a2f65d/3bb509b0/BRZ%2C%20BXZX%20%E2%80%94%20%D0%A1%D0%BD%D0%B5%D0%B3%20-%20Hardstyle%20-%20Slowed.mp3');
-        audio.loop = true;
+                // First visit in this session - increment count
+                const { data, error } = await supabaseClient
+                    .rpc('increment_views');
+                
+                if (!error && data) {
+                    viewsCount.textContent = data;
+                    sessionStorage.setItem('hasVisited', 'true');
+                }
+            } catch (error) {
+                console.error('Error updating view counter:', error);
+                // Fallback to localStorage
+                let views = localStorage.getItem('profileViews') || 1;
+                if (!sessionStorage.getItem('hasVisited')) {
+                    views++;
+                    sessionStorage.setItem('hasVisited', 'true');
+                }
+                localStorage.setItem('profileViews', views);
+                viewsCount.textContent = views;
+            }
+        }
+
+        // Audio setup with two songs
+        const songs = [
+            {
+                url: 'https://rus.hitmotop.com/get/cuts/11/fd/11fddd32ceb8dbbc8565ace81dc4929e/79690257/tjomnyjj_princ_-_overdoz_b128f0d89.mp3',
+                title: 'овердоз - тёмный принц'
+            },
+            {
+                url: 'https://rus.hitmotop.com/get/music/20241020/BrZ_-_Kanikuly_Hardstyle_Remix_78365867.mp3',
+                title: 'каникулы - BRZ'
+            }
+        ];
+
+        const audio = new Audio();
+        let currentSongIndex = 0;
         let isPlaying = false;
         audio.volume = 0.7;
+
+        // Load song
+        function loadSong(index) {
+            currentSongIndex = index;
+            audio.src = songs[index].url;
+            songTitle.textContent = songs[index].title;
+            
+            // Reset progress
+            progress.style.width = '0%';
+            currentTime.textContent = '0:00';
+            totalTime.textContent = '0:00';
+            
+            // If was playing, play new song
+            if (isPlaying) {
+                audio.play();
+            }
+        }
 
         // Format time function
         function formatTime(seconds) {
@@ -676,7 +962,7 @@
             }
         }
 
-        // Set progress on click - FIXED VERSION
+        // Set progress on click
         let isProgressDragging = false;
         
         progressBar.addEventListener('mousedown', (e) => {
@@ -704,17 +990,15 @@
                 const percent = (e.clientX - rect.left) / rect.width;
                 const newTime = percent * audio.duration;
                 
-                // Set the new time without restarting
                 audio.currentTime = newTime;
                 
-                // If audio was playing, continue playing
                 if (isPlaying && audio.paused) {
                     audio.play();
                 }
             }
         }
 
-        // Volume control with smooth transition
+        // Volume control
         let isVolumeDragging = false;
         
         volumeSlider.addEventListener('mousedown', (e) => {
@@ -741,27 +1025,23 @@
             let percent = (e.clientX - rect.left) / rect.width;
             percent = Math.max(0, Math.min(1, percent));
             
-            // Smooth volume transition
-            const targetVolume = percent;
-            const currentVolume = audio.volume;
-            const step = (targetVolume - currentVolume) * 0.3;
-            
-            const smoothVolumeChange = () => {
-                if (Math.abs(audio.volume - targetVolume) > 0.01) {
-                    audio.volume += step;
-                    volumeLevel.style.width = `${audio.volume * 100}%`;
-                    requestAnimationFrame(smoothVolumeChange);
-                } else {
-                    audio.volume = targetVolume;
-                    volumeLevel.style.width = `${targetVolume * 100}%`;
-                }
-            };
-            
-            smoothVolumeChange();
+            audio.volume = percent;
+            volumeLevel.style.width = `${percent * 100}%`;
         }
 
         // Update volume level display
         volumeLevel.style.width = `${audio.volume * 100}%`;
+
+        // Song navigation
+        prevBtn.addEventListener('click', () => {
+            const newIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(newIndex);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const newIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(newIndex);
+        });
 
         // Music toggle functionality
         musicToggle.addEventListener('click', (e) => {
@@ -786,8 +1066,8 @@
         audio.addEventListener('timeupdate', updateProgress);
 
         audio.addEventListener('ended', () => {
-            musicToggle.textContent = '▶';
-            isPlaying = false;
+            const nextIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(nextIndex);
         });
 
         // 404 page functionality
@@ -795,12 +1075,6 @@
             e.preventDefault();
             page404.style.display = 'none';
         });
-
-        // Simulate 404 page for demonstration
-        setTimeout(() => {
-            // Uncomment the line below to show 404 page automatically for demo
-            // page404.style.display = 'flex';
-        }, 5000);
 
         // Loading countdown
         let timeLeft = 2;
@@ -824,13 +1098,17 @@
                 mainContent.style.display = 'block';
                 mainContent.classList.add('show');
                 
-                // Auto-play music after click (with user interaction)
+                // Update view counter
+                updateViewCounter();
+                
+                // Load first song and auto-play
+                loadSong(0);
                 if (!isPlaying) {
                     audio.play().then(() => {
                         isPlaying = true;
                         musicToggle.textContent = '⏸';
                     }).catch(e => {
-                        console.log("Auto-play failed:", e);
+                        console.log("Audio play failed:", e);
                     });
                 }
             }
@@ -843,36 +1121,8 @@
             background.style.transform = `translate(${moveX}px, ${moveY}px)`;
         });
 
-        // Animated dots
-        function createDot() {
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            
-            const size = Math.random() * 5 + 3;
-            dot.style.width = `${size}px`;
-            dot.style.height = `${size}px`;
-            
-            dot.style.left = `${Math.random() * 100}vw`;
-            dot.style.top = '-10px';
-            
-            document.body.appendChild(dot);
-
-            const duration = Math.random() * 3000 + 2000;
-            const animation = dot.animate([
-                { transform: 'translateY(0) translateX(0)', opacity: 1 },
-                { transform: `translateY(${window.innerHeight + 10}px) translateX(${(Math.random() - 0.5) * 200}px)`, opacity: 0 }
-            ], {
-                duration,
-                easing: 'linear'
-            });
-
-            animation.onfinish = () => dot.remove();
-        }
-
-        setInterval(createDot, 300);
-        for (let i = 0; i < 10; i++) {
-            setTimeout(createDot, Math.random() * 1000);
-        }
+        // Initialize
+        loadSong(0);
     </script>
 </body>
 </html>
