@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Все ваши стили остаются без изменений */
+        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
@@ -17,10 +17,6 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
         }
 
         body {
@@ -30,21 +26,656 @@
             background: #000;
             font-family: 'Montserrat', Arial, sans-serif;
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
             cursor: none;
         }
 
-        /* ... остальные стили ... */
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.1s;
+        }
+
+        /* Background with GIF */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.pinimg.com/originals/ba/02/5c/ba025c75ff58037cd836c047658d6a3e.gif') center/cover;
+            z-index: -2;
+            filter: brightness(0.3);
+        }
+
+        /* Loading screen */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        /* Click anywhere prompt */
+        .click-anywhere {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+            z-index: 90;
+            cursor: none;
+        }
+
+        /* Main content */
+        .main-content {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 80;
+            width: 90%;
+            max-width: 420px;
+        }
+
+        .main-content.show {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 2.5rem 2rem;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        }
+
+        .profile-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .views-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .eye-icon {
+            font-size: 1rem;
+        }
+
+        .logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: block;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .link {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            font-weight: 500;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .link:hover::before {
+            left: 100%;
+        }
+
+        .link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* YouTube button */
+        .link.youtube {
+            background: rgba(255, 0, 0, 0.15);
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .link.youtube:hover {
+            background: rgba(255, 0, 0, 0.25);
+            border-color: rgba(255, 0, 0, 0.6);
+        }
+
+        /* Steam button */
+        .link.steam {
+            background: rgba(26, 75, 114, 0.15);
+            border-color: rgba(26, 75, 114, 0.3);
+        }
+
+        .link.steam:hover {
+            background: rgba(26, 75, 114, 0.25);
+            border-color: rgba(26, 75, 114, 0.6);
+        }
+
+        /* Spotify button */
+        .link.spotify {
+            background: rgba(29, 185, 84, 0.15);
+            border-color: rgba(29, 185, 84, 0.3);
+        }
+
+        .link.spotify:hover {
+            background: rgba(29, 185, 84, 0.25);
+            border-color: rgba(29, 185, 84, 0.6);
+        }
+
+        .link-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .link:hover .link-icon {
+            transform: scale(1.2);
+        }
+
+        /* Music player */
+        .music-player {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            width: 320px;
+            cursor: none;
+            transition: transform 0.3s ease;
+        }
+
+        .music-player:hover {
+            transform: translateY(-5px);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .player-title {
+            font-size: 0.95rem;
+            color: #ffffff;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .song-title {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .music-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ffffff;
+            font-size: 1.1rem;
+            cursor: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .music-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: none;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .volume-icon {
+            color: white;
+            font-size: 1.2rem;
+            width: 24px;
+            height: 24px;
+            opacity: 0.8;
+            cursor: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .volume-icon.muted::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: white;
+            transform: rotate(-45deg) translateY(-50%);
+            opacity: 0.8;
+        }
+
+        .volume-slider {
+            flex-grow: 1;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: none;
+            position: relative;
+        }
+
+        .volume-level {
+            height: 100%;
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            border-radius: 3px;
+            width: 70%;
+            transition: width 0.1s ease;
+        }
+
+        .song-navigation {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            cursor: none;
+            transition: all 0.2s;
+            padding: 8px 12px;
+            min-width: 40px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        /* Snowflakes */
+        .snowflake {
+            position: fixed;
+            color: white;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: -1;
+            user-select: none;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            animation: snowFall linear forwards;
+        }
+
+        /* 404 Page */
+        .page-404 {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #888;
+            cursor: none;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+
+        .back-home {
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            font-weight: 500;
+            cursor: none;
+        }
+
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes snowFall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .profile-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+                margin: 1rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .link {
+                padding: 0.9rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .music-player {
+                width: calc(100% - 40px);
+                right: 20px;
+                bottom: 20px;
+                left: 20px;
+            }
+
+            .main-content {
+                width: 95%;
+                max-width: none;
+            }
+
+            .click-anywhere {
+                font-size: 1.1rem;
+                padding: 0.8rem 1.5rem;
+            }
+
+            .cursor {
+                display: none;
+            }
+
+            body {
+                cursor: default;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .link {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .music-player {
+                padding: 15px;
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                width: calc(100% - 30px);
+            }
+
+            .profile-info {
+                top: 15px;
+                right: 15px;
+            }
+
+            .views-counter {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 360px) {
+            .profile-card {
+                padding: 1rem 0.8rem;
+            }
+            
+            .title {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .link {
+                padding: 0.7rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .music-player {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Ваша HTML структура остается без изменений -->
     <div class="cursor"></div>
     <div class="background"></div>
     
     <div class="loading">
         <div class="spinner"></div>
-        <div class="loading-text">Loading: 2s</div>
+        <div class="loading-text">LOADING: 2s</div>
     </div>
 
     <div class="click-anywhere">click..</div>
@@ -57,7 +688,7 @@
                     <span id="viewsCount">0</span>
                 </div>
             </div>
-            <img src="https://i.pinimg.com/originals/ba/02/5c/ba025c75ff58037cd836c047658d6a3e.gif" alt="xd1mple" class="logo">
+            <img src="https://i.postimg.cc/TY4RdSS4/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="xd1mple" class="logo">
             <h1 class="title">xd1mple</h1>
             <p class="subtitle">unknown</p>
             
@@ -84,11 +715,41 @@
         </div>
     </div>
 
-    <!-- Music player и 404 page -->
+    <!-- Music player -->
     <div class="music-player">
-        <!-- ... ваш music player ... -->
+        <div class="player-header">
+            <div class="player-title">Now Playing</div>
+        </div>
+        
+        <div class="song-title" id="songTitle">овердоз - тёмный принц</div>
+        
+        <div class="music-controls">
+            <button class="music-toggle" id="musicToggle">⏸</button>
+            <div class="progress-container">
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="song-navigation">
+            <button class="nav-btn" id="prevBtn">◀</button>
+            <button class="nav-btn" id="nextBtn">▶</button>
+        </div>
+        
+        <div class="volume-controls">
+            <div class="volume-icon" id="volumeIcon">🔊</div>
+            <div class="volume-slider" id="volumeSlider">
+                <div class="volume-level" id="volumeLevel"></div>
+            </div>
+        </div>
     </div>
 
+    <!-- 404 Page -->
     <div class="page-404" id="page404">
         <div class="error-code">404</div>
         <div class="error-message">Page Not Found</div>
@@ -102,186 +763,67 @@
         
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Генерация уникального ID для посетителя
-        function getVisitorId() {
-            let visitorId = localStorage.getItem('visitorId');
-            if (!visitorId) {
-                // Создаем уникальный ID на основе времени и случайного числа
-                visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('visitorId', visitorId);
-            }
-            return visitorId;
-        }
-
-        // УЛУЧШЕННЫЙ СЧЕТЧИК ПРОСМОТРОВ - 1 просмотр с 1 IP
-        async function updateViewCounter() {
-            try {
-                const visitorId = getVisitorId();
-                
-                // Проверяем, был ли уже просмотр от этого посетителя
-                const { data: existingView, error: checkError } = await supabaseClient
-                    .from('visitor_views')
-                    .select('id')
-                    .eq('visitor_id', visitorId)
-                    .single();
-
-                // Если просмотр уже был, просто получаем текущее количество просмотров
-                if (existingView && !checkError) {
-                    const { data: viewsData, error: viewsError } = await supabaseClient
-                        .from('views')
-                        .select('count')
-                        .eq('id', 1)
-                        .single();
-                    
-                    if (!viewsError && viewsData) {
-                        document.getElementById('viewsCount').textContent = viewsData.count;
-                    }
-                    return;
-                }
-
-                // Первый просмотр от этого посетителя - увеличиваем счетчик
-                const { data: currentData, error: fetchError } = await supabaseClient
-                    .from('views')
-                    .select('count')
-                    .eq('id', 1)
-                    .single();
-
-                let newCount = 1;
-                
-                if (currentData && !fetchError) {
-                    newCount = currentData.count + 1;
-                    
-                    // Обновляем основной счетчик
-                    const { error: updateError } = await supabaseClient
-                        .from('views')
-                        .update({ count: newCount })
-                        .eq('id', 1);
-                    
-                    if (!updateError) {
-                        // Записываем, что этот посетитель уже просматривал
-                        const { error: visitorError } = await supabaseClient
-                            .from('visitor_views')
-                            .insert([{ 
-                                visitor_id: visitorId,
-                                viewed_at: new Date().toISOString()
-                            }]);
-                        
-                        document.getElementById('viewsCount').textContent = newCount;
-                    }
-                } else {
-                    // Создаем первую запись
-                    const { error: insertError } = await supabaseClient
-                        .from('views')
-                        .insert([{ id: 1, count: 1 }]);
-                    
-                    if (!insertError) {
-                        // Записываем первого посетителя
-                        const { error: visitorError } = await supabaseClient
-                            .from('visitor_views')
-                            .insert([{ 
-                                visitor_id: visitorId,
-                                viewed_at: new Date().toISOString()
-                            }]);
-                        
-                        document.getElementById('viewsCount').textContent = 1;
-                    }
-                }
-                
-            } catch (error) {
-                console.error('Error updating view counter:', error);
-                // Fallback на простой счетчик
-                incrementViewsFallback();
-            }
-        }
-
-        // Fallback на localStorage (простая версия)
-        function incrementViewsFallback() {
-            let views = parseInt(localStorage.getItem('profileViews')) || 0;
-            const visitorId = getVisitorId();
-            const hasViewed = localStorage.getItem(`hasViewed_${visitorId}`);
-            
-            if (!hasViewed) {
-                views++;
-                localStorage.setItem('profileViews', views.toString());
-                localStorage.setItem(`hasViewed_${visitorId}`, 'true');
-            }
-            document.getElementById('viewsCount').textContent = views;
-        }
-
-        // Остальной ваш JavaScript код...
+        // Custom cursor - ИСПРАВЛЕННЫЙ
         const cursor = document.querySelector('.cursor');
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // Snowflake creation...
-        function createSnowflake(x, y, isBackground = false) {
+        // Snowflake creation - ПЛАВНЫЕ СНЕЖИНКИ СРАЗУ ЛЕТЯТ ВНИЗ
+        function createSnowflake(x, y) {
             const snowflake = document.createElement('div');
-            snowflake.className = isBackground ? 'background-snowflake' : 'snowflake';
+            snowflake.className = 'snowflake';
             snowflake.innerHTML = '❄';
             snowflake.style.left = x + 'px';
             snowflake.style.top = y + 'px';
             
-            const size = isBackground ? Math.random() * 12 + 8 : Math.random() * 10 + 6;
+            const size = Math.random() * 8 + 4;
             snowflake.style.fontSize = size + 'px';
             
-            const duration = Math.random() * 2000 + 3000;
-            const delay = Math.random() * 500;
+            // Плавная анимация без задержки
+            const duration = Math.random() * 3000 + 2000;
             
-            const animation = snowflake.animate([
-                { 
-                    transform: `translateY(-20px) rotate(0deg)`,
-                    opacity: isBackground ? 0.6 : 1
-                },
-                { 
-                    transform: `translateY(${window.innerHeight + 50}px) rotate(720deg)`,
-                    opacity: 0
-                }
-            ], {
-                duration: duration,
-                delay: delay,
-                easing: 'cubic-bezier(0.3, 0, 0.7, 1)'
-            });
+            snowflake.style.animation = `snowFall ${duration}ms linear forwards`;
             
             document.body.appendChild(snowflake);
             
-            animation.onfinish = () => {
+            // Удаляем снежинку после анимации
+            setTimeout(() => {
                 if (snowflake.parentNode) {
                     snowflake.parentNode.removeChild(snowflake);
                 }
-            };
+            }, duration);
         }
 
-        // Background snowflakes...
-        function createBackgroundSnowflakes() {
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    createSnowflake(
-                        Math.random() * window.innerWidth,
-                        Math.random() * -50,
-                        true
-                    );
-                }, Math.random() * 2000);
-            }
-        }
-
-        // Cursor snowflakes...
+        // Cursor snowflakes - снежинки сразу летят вниз
         let lastSnowflakeTime = 0;
         document.addEventListener('mousemove', (e) => {
             const now = Date.now();
-            if (now - lastSnowflakeTime > 100) {
+            if (now - lastSnowflakeTime > 50) { // Чаще создаем снежинки
                 createSnowflake(
-                    e.clientX + (Math.random() - 0.5) * 40, 
-                    e.clientY + (Math.random() - 0.5) * 30
+                    e.clientX + (Math.random() - 0.5) * 30, 
+                    e.clientY + (Math.random() - 0.5) * 20
                 );
                 lastSnowflakeTime = now;
             }
         });
 
+        // Background snowflakes
+        function createBackgroundSnowflakes() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    createSnowflake(
+                        Math.random() * window.innerWidth,
+                        Math.random() * -50
+                    );
+                }, Math.random() * 1000);
+            }
+        }
+
         // Initialize background snow
         createBackgroundSnowflakes();
-        setInterval(createBackgroundSnowflakes, 3000);
+        setInterval(createBackgroundSnowflakes, 2000);
 
         const loading = document.querySelector('.loading');
         const loadingText = document.querySelector('.loading-text');
@@ -295,13 +837,37 @@
         const totalTime = document.getElementById('totalTime');
         const volumeSlider = document.getElementById('volumeSlider');
         const volumeLevel = document.getElementById('volumeLevel');
+        const volumeIcon = document.getElementById('volumeIcon');
         const page404 = document.getElementById('page404');
         const backHome = document.getElementById('backHome');
         const songTitle = document.getElementById('songTitle');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
+        const viewsCount = document.getElementById('viewsCount');
 
-        // Audio setup with two songs
+        // Упрощенный счетчик просмотров
+        async function updateViewCounter() {
+            try {
+                let views = parseInt(localStorage.getItem('profileViews')) || 0;
+                const visitorId = localStorage.getItem('visitorId');
+                
+                if (!visitorId) {
+                    // Новый посетитель
+                    const newVisitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('visitorId', newVisitorId);
+                    views++;
+                    localStorage.setItem('profileViews', views.toString());
+                }
+                
+                viewsCount.textContent = views;
+                
+            } catch (error) {
+                console.error('Error updating view counter:', error);
+                viewsCount.textContent = '1';
+            }
+        }
+
+        // Audio setup with your songs
         const songs = [
             {
                 url: 'https://lmusic.kz/api/download/249631',
@@ -310,13 +876,52 @@
             {
                 url: 'https://storage9.lightaudio.ru/dm/3992259a/61f29185/BRZ%20%E2%80%94%20%D0%9A%D0%B0%D0%BD%D0%B8%D0%BA%D1%83%D0%BB%D1%8B%20%28Hardstyle%20Remix%29.mp3',
                 title: 'каникулы - BRZ'
+            },
+            {
+                url: 'https://storage4.lightaudio.ru/dm/399259aa/5987de6be/%D0%B1%D0%B5%D0%BB%D1%8B%D0%B9%20%D1%81%D0%BD%D0%B5%D0%B3%20%E2%80%94%20%D0%B1%D0%B5%D0%BB%D1%8B%D0%B9%20%D0%BF%D0%BE%D1%80%D1%88%20%20%5B%40nightcorebot%5D.mp3',
+                title: 'белый порш (speed up)'
             }
         ];
 
         const audio = new Audio();
         let currentSongIndex = 0;
         let isPlaying = false;
+        let isMuted = false;
+        let lastVolume = 0.7; // Сохраняем последнюю громкость
         audio.volume = 0.7;
+
+        // Функция для обновления иконки громкости
+        function updateVolumeIcon(volume) {
+            if (isMuted || volume === 0) {
+                volumeIcon.textContent = '🔇';
+                volumeIcon.classList.add('muted');
+            } else if (volume <= 0.1) {
+                volumeIcon.textContent = '🔈';
+                volumeIcon.classList.remove('muted');
+            } else if (volume <= 0.5) {
+                volumeIcon.textContent = '🔉';
+                volumeIcon.classList.remove('muted');
+            } else {
+                volumeIcon.textContent = '🔊';
+                volumeIcon.classList.remove('muted');
+            }
+        }
+
+        // Функция для переключения mute/unmute
+        function toggleMute() {
+            if (isMuted) {
+                // Включаем звук
+                audio.volume = lastVolume;
+                isMuted = false;
+            } else {
+                // Выключаем звук
+                lastVolume = audio.volume;
+                audio.volume = 0;
+                isMuted = true;
+            }
+            updateVolumeIcon(audio.volume);
+            volumeLevel.style.width = `${audio.volume * 100}%`;
+        }
 
         // Load song
         function loadSong(index) {
@@ -331,7 +936,9 @@
             
             // If was playing, play new song
             if (isPlaying) {
-                audio.play();
+                audio.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                });
             }
         }
 
@@ -383,7 +990,9 @@
                 audio.currentTime = newTime;
                 
                 if (isPlaying && audio.paused) {
-                    audio.play();
+                    audio.play().catch(e => {
+                        console.log("Audio play failed:", e);
+                    });
                 }
             }
         }
@@ -416,11 +1025,21 @@
             percent = Math.max(0, Math.min(1, percent));
             
             audio.volume = percent;
+            lastVolume = percent;
+            isMuted = false;
+            updateVolumeIcon(percent);
             volumeLevel.style.width = `${percent * 100}%`;
         }
 
+        // Клик по иконке громкости для mute/unmute
+        volumeIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMute();
+        });
+
         // Update volume level display
         volumeLevel.style.width = `${audio.volume * 100}%`;
+        updateVolumeIcon(audio.volume);
 
         // Song navigation
         prevBtn.addEventListener('click', () => {
@@ -466,11 +1085,11 @@
             page404.style.display = 'none';
         });
 
-        // Loading countdown
+        // Loading countdown - ИСПРАВЛЕННЫЙ
         let timeLeft = 2;
         const countdown = setInterval(() => {
             timeLeft--;
-            loadingText.textContent = `Loading: ${timeLeft}s`;
+            loadingText.textContent = `LOADING: ${timeLeft}s`;
             
             if (timeLeft <= 0) {
                 clearInterval(countdown);
