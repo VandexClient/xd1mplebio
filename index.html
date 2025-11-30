@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>avtozill biography</title>
+    <title>xd1mple | biography</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
@@ -343,20 +343,36 @@
             font-size: 12px;
             opacity: 0.8;
         }
+
+        /* Индикатор загрузки */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <!-- Видео фон -->
     <video autoplay muted loop class="video-background">
-        <source src="videos/background-video.mp4" type="video/mp4">
+        <source src="https://pouch.jumpshare.com/preview/v3aJ3xZHsR_oo_0wl-ozhOQy3B0INLNP5u-Ou1Euw5U3p53X-mts5rZyWp67v2Yzbr4TgWybJDjiaZpyg3wNGkOq32RHPWxVcaSVpThr4N5MjP0i8Wvr8toF8NbXHuCZOXeHaUz0sEdANjKO6mN0Tm6yjbN-I2pg_cnoHs_AmgI.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
     <!-- Первая био-карта -->
     <div class="bio-card" id="bioCard">
         <img src="https://i.ibb.co/wZCDM2Yv/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="Profile Image">
-        <h1>xd1mple</h1>
-        <p>IP: 192.0.0.1, unknown user - xd1mple</p>
+        <h1>Avtozill</h1>
+        <p>Hello, I am Avtozill. I developer mc.ApexRise.fun</p>
      
         <div class="social-icons">
             <a href="https://t.me/avtozill" class="telegram" target="_blank"><i class="fab fa-telegram-plane"></i><span class="tooltip">Telegram</span></a>
@@ -367,26 +383,27 @@
     <!-- Вторая био-карта -->
     <div class="bio-card-details" id="bioCardDetails">
         <h2>About Me</h2>
-        <p><strong>Name:</strong> Senya</p>
-        <p><strong>Profession:</strong> Разработчик</p>
-        <p><strong>Hobbies:</strong> Играть</p>
-        <p><strong>Live:</strong> В России</p>
-        <p><strong>About me:</strong> Разработчик, я разрабатываю майнкрафт проекты и, многое другое</p>
+        <p><strong>Name:</strong> Artem</p>
+        <p><strong>Age:</strong> 14</p>
+        <p><strong>Profession:</strong> Developer</p>
+        <p><strong>Hobbies:</strong> Eating, Sleeping, Gaming, Music</p>
+        <p><strong>Live:</strong> in Russia</p>
+        <p><strong>About me:</strong> Junior програмист, начинаю карьеру с обычных серверов. Я картавлю<3</p>
         
-        <h3>My Music</h3>
+        <h3>My Music <span id="loadingIndicator" class="loading" style="display: none;"></span></h3>
         <div class="song-list">
-            <div class="song-item active" data-song="songs/song1.mp3" data-image="images/song1.jpg" data-title="туповат" data-artist="Yng Eretik">
-                <img src="images/song1.jpg" alt="Song 1">
+            <div class="song-item active" data-song="https://storage1.lightaudio.ru/dm/39a0d8a5/3bb50909/YNG%20ERETIK%20%E2%80%94%20%D0%A2%D0%A3%D0%9F%D0%9E%D0%92%D0%90%D0%A2%20%28Speed%20Up%29.mp3" data-image="https://cover.lightaudio.ru/00304a5156ae83404060bf4ea5b17162b7be4abf6e5659795291af50785e4e5a5eaf5441b5a1b96071507041ab78598970715e89b75a6679be4a616e76be999860f25dfcecb44d8cc2a4d2e4d2b27d23534d3bdce2b2.jpg" data-title="туповат (speed up)" data-artist="Yng Eretik">
+                <img src="https://via.placeholder.com/40/1db954/ffffff?text=1" alt="Song 1">
                 <div class="song-details">
-                    <div class="song-title">туповат</div>
+                    <div class="song-title">туповат (speed up)</div>
                     <div class="song-artist">Yng Eretik</div>
                 </div>
             </div>
-            <div class="song-item" data-song="songs/song2.mp3" data-image="images/song2.jpg" data-title="russian soul" data-artist="EVEN CUTE & НАВЕРНОЕ ПОЭТ & ЯКОРЪ">
-                <img src="images/song2.jpg" alt="Song 2">
+            <div class="song-item" data-song="https://storage6.lightaudio.ru/dm/39922462/8f8b22aa/%D0%A0%D0%B0%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%92%D1%8B%D1%85%D1%83%D1%85%D0%BE%D0%BB%D1%8C%20%E2%80%94%20%D0%A1%D0%B0%D0%B9%D1%82.mp3" data-image="https://cover.lightaudio.ru/00304a51568e894e85a5755e4970715c72be495950bbb1bf60716c79998b616966b949655e559fb1566e935166444659766856758965937abe4a616e76ae81959060f25dfcecb44d8cc2a4d2e4d2b27d534d3bdce2b2.jpg" data-title="сайт" data-artist="Раковая Выхухоль">
+                <img src="https://via.placeholder.com/40/ffb732/ffffff?text=2" alt="Song 2">
                 <div class="song-details">
-                    <div class="song-title">russian soul</div>
-                    <div class="song-artist">EVEN CUTE & НАВЕРНОЕ ПОЭТ & ЯКОРЪ</div>
+                    <div class="song-title">сайт</div>
+                    <div class="song-artist">Раковая Выхухоль</div>
                 </div>
             </div>
         </div>
@@ -399,10 +416,10 @@
 
     <!-- Музыкальный плеер -->
     <div class="music-player" id="musicPlayer">
-        <img src="images/song1.jpg" alt="Song Image" id="currentSongImage">
+        <img src="https://via.placeholder.com/50/1db954/ffffff?text=1" alt="Song Image" id="currentSongImage">
         <div class="song-info">
-            <p id="currentSongTitle">туповат</p>
-            <p id="currentSongArtist">Yng Eretik</p>
+            <p id="currentSongTitle">SoundHelix Song 1</p>
+            <p id="currentSongArtist">SoundHelix</p>
             <div class="progress-container">
                 <input type="range" id="songProgress" value="0" max="100">
             </div>
@@ -416,7 +433,7 @@
     </div>
 
     <!-- Аудио -->
-    <audio id="audioPlayer" src="songs/song1.mp3"></audio>
+    <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
     <script>
         const audioPlayer = document.getElementById('audioPlayer');
@@ -429,6 +446,7 @@
         const currentSongImage = document.getElementById('currentSongImage');
         const currentSongTitle = document.getElementById('currentSongTitle');
         const currentSongArtist = document.getElementById('currentSongArtist');
+        const loadingIndicator = document.getElementById('loadingIndicator');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
@@ -544,6 +562,10 @@
             const songTitle = songItem.getAttribute('data-title');
             const songArtist = songItem.getAttribute('data-artist');
             
+            // Показываем индикатор загрузки
+            loadingIndicator.style.display = 'inline-block';
+            playPauseBtn.disabled = true;
+            
             // Обновляем плеер
             audioPlayer.src = songSrc;
             currentSongImage.src = songImage;
@@ -558,6 +580,10 @@
             
             // Восстанавливаем состояние воспроизведения после загрузки
             audioPlayer.addEventListener('canplaythrough', function onCanPlay() {
+                // Скрываем индикатор загрузки
+                loadingIndicator.style.display = 'none';
+                playPauseBtn.disabled = false;
+                
                 if (wasPlaying) {
                     audioPlayer.play().then(() => {
                         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
@@ -610,7 +636,30 @@
         audioPlayer.addEventListener('error', (e) => {
             console.error('Audio loading error:', e);
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            loadingIndicator.style.display = 'none';
+            playPauseBtn.disabled = false;
+            
+            // Показываем сообщение об ошибке
+            currentSongTitle.textContent = 'Error loading song';
+            currentSongArtist.textContent = 'Please try again';
         });
+
+        // Индикатор загрузки при первом запуске
+        audioPlayer.addEventListener('loadstart', () => {
+            loadingIndicator.style.display = 'inline-block';
+        });
+
+        // Предзагрузка следующей песни для плавного переключения
+        function preloadNextSong() {
+            const nextIndex = (currentSongIndex + 1) % songItems.length;
+            const nextSong = songItems[nextIndex].getAttribute('data-song');
+            const preloadAudio = new Audio();
+            preloadAudio.src = nextSong;
+            preloadAudio.load();
+        }
+
+        // Начинаем предзагрузку
+        preloadNextSong();
     </script>
 </body>
 </html>
