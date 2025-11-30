@@ -3,1117 +3,614 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xd1mple | bio</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚫</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>avtozill biography</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            background: #000;
-            font-family: 'Montserrat', Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             color: white;
-            overflow-x: hidden;
-            cursor: none;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #121212;
         }
 
-        /* Custom cursor */
-        .cursor {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            mix-blend-mode: difference;
-            transition: transform 0.1s;
-        }
-
-        /* Background with GIF */
-        .background {
-            position: fixed;
+        /* Видео на фон */
+        .video-background {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://i.pinimg.com/originals/ba/02/5c/ba025c75ff58037cd836c047658d6a3e.gif') center/cover;
-            z-index: -2;
-            filter: brightness(0.3);
-        }
-
-        /* Loading screen */
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #ffffff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .loading-text {
-            font-size: 1.2rem;
-            color: #ffffff;
-            font-weight: 500;
-            letter-spacing: 2px;
-        }
-
-        /* Click anywhere prompt */
-        .click-anywhere {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            font-size: 1.3rem;
-            font-weight: 600;
-            animation: pulse 2s infinite;
-            z-index: 90;
-            cursor: none;
-        }
-
-        /* Main content */
-        .main-content {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 80;
-            width: 90%;
-            max-width: 420px;
-        }
-
-        .main-content.show {
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .profile-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 2.5rem 2rem;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        }
-
-        .profile-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
-        }
-
-        .views-counter {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .eye-icon {
-            font-size: 1rem;
-        }
-
-        .logo {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: block;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            z-index: -1;
         }
 
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .title {
-            font-size: 2.5rem;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 2rem;
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: 1px;
-        }
-
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .link {
-            padding: 1rem 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            text-decoration: none;
+        /* Первая био-карта */
+        .bio-card {
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
-            font-weight: 500;
-            font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .link:hover::before {
-            left: 100%;
-        }
-
-        .link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        /* YouTube button */
-        .link.youtube {
-            background: rgba(255, 0, 0, 0.15);
-            border-color: rgba(255, 0, 0, 0.3);
-        }
-
-        .link.youtube:hover {
-            background: rgba(255, 0, 0, 0.25);
-            border-color: rgba(255, 0, 0, 0.6);
-        }
-
-        /* Steam button */
-        .link.steam {
-            background: rgba(26, 75, 114, 0.15);
-            border-color: rgba(26, 75, 114, 0.3);
-        }
-
-        .link.steam:hover {
-            background: rgba(26, 75, 114, 0.25);
-            border-color: rgba(26, 75, 114, 0.6);
-        }
-
-        /* Spotify button */
-        .link.spotify {
-            background: rgba(29, 185, 84, 0.15);
-            border-color: rgba(29, 185, 84, 0.3);
-        }
-
-        .link.spotify:hover {
-            background: rgba(29, 185, 84, 0.25);
-            border-color: rgba(29, 185, 84, 0.6);
-        }
-
-        .link-icon {
-            width: 24px;
-            height: 24px;
-            transition: transform 0.3s ease;
-        }
-
-        .link:hover .link-icon {
-            transform: scale(1.2);
-        }
-
-        /* Music player */
-        .music-player {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
             padding: 20px;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            width: 320px;
-            cursor: none;
-            transition: transform 0.3s ease;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease-out;
+            transform-style: preserve-3d;
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 1;
         }
 
-        .music-player:hover {
-            transform: translateY(-5px);
-        }
-
-        .player-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .player-title {
-            font-size: 0.95rem;
-            color: #ffffff;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-
-        .song-title {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.8);
+        .bio-card img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
             margin-bottom: 15px;
+            transition: transform 0.3s;
+            border: 2px solid #ffb732;
+        }
+
+        .bio-card h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .bio-card p {
+            margin: 10px 0;
+            font-size: 16px;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
+            border-right: 2px solid white;
+            width: 100%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: typing 3s steps(30, end), blink-caret 0.7s step-end infinite;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
         }
 
-        .music-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
         }
 
-        .music-toggle {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: #ffffff;
-            font-size: 1.1rem;
-            cursor: none;
-            width: 40px;
-            height: 40px;
+        @keyframes blink-caret {
+            50% { border-color: transparent; }
+        }
+
+        .social-icons {
             display: flex;
-            align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            gap: 20px;
+            margin: 20px 0;
+            position: relative;
         }
 
-        .music-toggle:hover {
-            background: rgba(255, 255, 255, 0.25);
+        .social-icons a {
+            color: white;
+            font-size: 32px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .social-icons a:hover {
             transform: scale(1.1);
         }
 
-        .progress-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .social-icons a.telegram {
+            color: #0088cc;
         }
 
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
+        .social-icons a.telegram:hover {
+            color: #0078b4;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            cursor: none;
-            position: relative;
+        .social-icons a.discord {
+            color: #5865F2;
         }
 
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, #ffffff, #e0e0e0);
-            border-radius: 3px;
-            width: 0%;
-            transition: width 0.1s;
+        .social-icons a.discord:hover {
+            color: #4e5dbf;
         }
 
-        .volume-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .social-icons a.info-btn {
+            color: #ffb732;
         }
 
-        .volume-icon {
+        .social-icons a.info-btn:hover {
+            color: #ff9f00;
+        }
+
+        /* Всплывающие подсказки при наведении */
+        .social-icons a .tooltip {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
             color: white;
-            font-size: 1.2rem;
-            width: 24px;
-            height: 24px;
-            opacity: 0.8;
-            cursor: none;
-            transition: all 0.3s ease;
-        }
-
-        .volume-slider {
-            flex-grow: 1;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            cursor: none;
-            position: relative;
-        }
-
-        .volume-level {
-            height: 100%;
-            background: linear-gradient(90deg, #ffffff, #e0e0e0);
-            border-radius: 3px;
-            width: 70%;
-            transition: width 0.1s ease;
-        }
-
-        .song-navigation {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-            justify-content: center;
-        }
-
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem;
-            cursor: none;
-            transition: all 0.2s;
-            padding: 8px 12px;
-            min-width: 40px;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.05);
-        }
-
-        /* Snowflakes */
-        .snowflake {
-            position: fixed;
-            color: white;
-            font-size: 1rem;
-            pointer-events: none;
-            z-index: -1;
-            user-select: none;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-            animation: snowFall linear forwards;
-        }
-
-        /* 404 Page */
-        .page-404 {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #1a1a1a;
-            z-index: 1000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #888;
-            cursor: none;
-        }
-
-        .error-code {
-            font-size: 8rem;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .error-message {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            color: #666;
-        }
-
-        .back-home {
-            padding: 1rem 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            text-decoration: none;
+            padding: 5px 10px;
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
-            font-weight: 500;
-            cursor: none;
+            font-size: 14px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            white-space: nowrap;
         }
 
-        .back-home:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+        .social-icons a:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
         }
 
-        /* Animations */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* Музыкальный плеер */
+        .music-player {
+            width: 80%;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
+            animation: slide-up 1s ease-in-out;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+        @keyframes slide-up {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(0); }
         }
 
-        @keyframes fadeInUp {
-            from { 
-                opacity: 0;
-                transform: translate(-50%, -40%);
-            }
-            to { 
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
+        .music-player .song-info {
+            flex-grow: 1;
+            color: white;
         }
 
-        @keyframes snowFall {
-            0% {
-                transform: translateY(-10px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
+        .music-player .song-info p {
+            margin: 0;
+            font-size: 18px;
+            text-align: left;
+            border: none;
+            animation: none;
+            white-space: normal;
         }
 
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-            .profile-card {
-                padding: 2rem 1.5rem;
-                border-radius: 20px;
-                margin: 1rem;
-            }
-            
-            .title {
-                font-size: 2rem;
-            }
-            
-            .logo {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .link {
-                padding: 0.9rem 1.2rem;
-                font-size: 0.95rem;
-            }
-
-            .music-player {
-                width: calc(100% - 40px);
-                right: 20px;
-                bottom: 20px;
-                left: 20px;
-            }
-
-            .main-content {
-                width: 95%;
-                max-width: none;
-            }
-
-            .click-anywhere {
-                font-size: 1.1rem;
-                padding: 0.8rem 1.5rem;
-            }
-
-            .cursor {
-                display: none;
-            }
-
-            body {
-                cursor: default;
-            }
+        .music-player img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
         }
 
-        @media (max-width: 480px) {
-            .profile-card {
-                padding: 1.5rem 1rem;
-            }
-            
-            .title {
-                font-size: 1.8rem;
-            }
-            
-            .logo {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .link {
-                padding: 0.8rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .music-player {
-                padding: 15px;
-                bottom: 15px;
-                right: 15px;
-                left: 15px;
-                width: calc(100% - 30px);
-            }
-
-            .profile-info {
-                top: 15px;
-                right: 15px;
-            }
-
-            .views-counter {
-                padding: 6px 12px;
-                font-size: 0.8rem;
-            }
+        .music-player .progress-container {
+            width: 100%;
+            margin-top: 5px;
         }
 
-        /* Small phones */
-        @media (max-width: 360px) {
-            .profile-card {
-                padding: 1rem 0.8rem;
-            }
-            
-            .title {
-                font-size: 1.6rem;
-            }
-            
-            .subtitle {
-                font-size: 0.9rem;
-            }
-            
-            .link {
-                padding: 0.7rem 0.8rem;
-                font-size: 0.85rem;
-            }
+        .music-player input[type="range"] {
+            width: 100%;
+            background: #444;
+            border-radius: 10px;
+            height: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
 
-            .music-player {
-                padding: 12px;
-            }
+        .music-player input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #1db954;
+            cursor: pointer;
+        }
+
+        .music-player input[type="range"]::-webkit-slider-track {
+            height: 5px;
+            background: #444;
+            border-radius: 10px;
+        }
+
+        .music-player .buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .music-player button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .music-player button:hover {
+            transform: scale(1.1);
+        }
+
+        .music-player .mute-btn {
+            color: #1db954;
+        }
+
+        .music-player .play-btn {
+            color: #ffb732;
+        }
+
+        .music-player .prev-btn,
+        .music-player .next-btn {
+            color: #cccccc;
+            font-size: 20px;
+        }
+
+        .music-player .prev-btn:hover,
+        .music-player .next-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Вторая био-карта */
+        .bio-card-details {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 400px;
+            text-align: left;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 50%;
+            right: -500px; /* Изначально скрыта справа */
+            transform: translateY(-50%);
+            transition: right 0.5s ease-in-out;
+            backdrop-filter: blur(8px);
+        }
+
+        .bio-card-details h2 {
+            font-size: 22px;
+            margin: 10px 0;
+        }
+
+        .bio-card-details p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        /* Кнопка для открытия второй карты */
+        .show-details-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .show-details-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Стили для списка песен */
+        .song-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .song-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .song-item.active {
+            background-color: rgba(29, 185, 84, 0.3);
+        }
+
+        .song-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+        }
+
+        .song-item .song-details {
+            flex-grow: 1;
+        }
+
+        .song-item .song-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .song-item .song-artist {
+            font-size: 12px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <div class="cursor"></div>
-    <div class="background"></div>
-    
-    <div class="loading">
-        <div class="spinner"></div>
-        <div class="loading-text">LOADING: 2s</div>
+    <!-- Видео фон -->
+    <video autoplay muted loop class="video-background">
+        <source src="videos/background-video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Первая био-карта -->
+    <div class="bio-card" id="bioCard">
+        <img src="https://i.ibb.co/wZCDM2Yv/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="Profile Image">
+        <h1>xd1mple</h1>
+        <p>IP: 192.0.0.1, unknown user - xd1mple</p>
+     
+        <div class="social-icons">
+            <a href="https://t.me/avtozill" class="telegram" target="_blank"><i class="fab fa-telegram-plane"></i><span class="tooltip">Telegram</span></a>
+            <a href="#" class="info-btn" id="showDetailsBtn"><i class="fas fa-info-circle"></i><span class="tooltip">More Info</span></a>
+        </div>
     </div>
 
-    <div class="click-anywhere">click..</div>
-
-    <div class="main-content">
-        <div class="profile-card">
-            <div class="profile-info">
-                <div class="views-counter">
-                    <span class="eye-icon">👁</span>
-                    <span id="viewsCount">0</span>
+    <!-- Вторая био-карта -->
+    <div class="bio-card-details" id="bioCardDetails">
+        <h2>About Me</h2>
+        <p><strong>Name:</strong> Senya</p>
+        <p><strong>Profession:</strong> Разработчик</p>
+        <p><strong>Hobbies:</strong> Играть</p>
+        <p><strong>Live:</strong> В России</p>
+        <p><strong>About me:</strong> Разработчик, я разрабатываю майнкрафт проекты и, многое другое</p>
+        
+        <h3>My Music</h3>
+        <div class="song-list">
+            <div class="song-item active" data-song="songs/song1.mp3" data-image="images/song1.jpg" data-title="туповат" data-artist="Yng Eretik">
+                <img src="images/song1.jpg" alt="Song 1">
+                <div class="song-details">
+                    <div class="song-title">туповат</div>
+                    <div class="song-artist">Yng Eretik</div>
                 </div>
             </div>
-            <img src="https://i.postimg.cc/TY4RdSS4/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="xd1mple" class="logo">
-            <h1 class="title">xd1mple</h1>
-            <p class="subtitle">unknown</p>
-            
-            <div class="links">
-                <a href="https://www.youtube.com/@tapweenq" target="_blank" class="link youtube">
-                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-                    </svg>
-                    YouTube
-                </a>
-                <a href="https://steamcommunity.com/id/bleyr9x" target="_blank" class="link steam">
-                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M11.979 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.58 0 11.979 0zM7.203 17.282c-1.337-.365-2.402-1.258-3.072-2.441 1.119.324 2.293.497 3.507.497 1.214 0 2.388-.173 3.507-.497-.67 1.183-1.735 2.076-3.072 2.441h-.87zm12.319-5.303c0 3.314-2.686 6-6 6s-6-2.686-6-6 2.686-6 6-6 6 2.686 6 6zm-10 0c0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4-4 1.791-4 4z"/>
-                    </svg>
-                    Steam
-                </a>
-                <a href="https://open.spotify.com/user/xd1mple" target="_blank" class="link spotify">
-                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-2-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                    </svg>
-                    Spotify
-                </a>
+            <div class="song-item" data-song="songs/song2.mp3" data-image="images/song2.jpg" data-title="russian soul" data-artist="EVEN CUTE & НАВЕРНОЕ ПОЭТ & ЯКОРЪ">
+                <img src="images/song2.jpg" alt="Song 2">
+                <div class="song-details">
+                    <div class="song-title">russian soul</div>
+                    <div class="song-artist">EVEN CUTE & НАВЕРНОЕ ПОЭТ & ЯКОРЪ</div>
+                </div>
             </div>
         </div>
+        
+        <p><strong> </strong> ㅤ</p>
+        <button class="show-details-btn" id="hideDetailsBtn">
+            <i class="fas fa-arrow-left"></i> Hide Details
+        </button>
     </div>
 
-    <!-- Music player -->
-    <div class="music-player">
-        <div class="player-header">
-            <div class="player-title">Now Playing</div>
-        </div>
-        
-        <div class="song-title" id="songTitle">туповат - Yng Eretik</div>
-        
-        <div class="music-controls">
-            <button class="music-toggle" id="musicToggle">⏸</button>
+    <!-- Музыкальный плеер -->
+    <div class="music-player" id="musicPlayer">
+        <img src="images/song1.jpg" alt="Song Image" id="currentSongImage">
+        <div class="song-info">
+            <p id="currentSongTitle">туповат</p>
+            <p id="currentSongArtist">Yng Eretik</p>
             <div class="progress-container">
-                <div class="time-display">
-                    <span id="currentTime">0:00</span>
-                    <span id="totalTime">0:00</span>
-                </div>
-                <div class="progress-bar" id="progressBar">
-                    <div class="progress" id="progress"></div>
-                </div>
+                <input type="range" id="songProgress" value="0" max="100">
             </div>
         </div>
-        
-        <div class="song-navigation">
-            <button class="nav-btn" id="prevBtn">◀</button>
-            <button class="nav-btn" id="nextBtn">▶</button>
-        </div>
-        
-        <div class="volume-controls">
-            <div class="volume-icon" id="volumeIcon">🔊</div>
-            <div class="volume-slider" id="volumeSlider">
-                <div class="volume-level" id="volumeLevel"></div>
-            </div>
+        <div class="buttons">
+            <button id="prevBtn" class="prev-btn" title="Previous song"><i class="fas fa-step-backward"></i></button>
+            <button id="playPauseBtn" class="play-btn"><i class="fas fa-play"></i></button>
+            <button id="nextBtn" class="next-btn" title="Next song"><i class="fas fa-step-forward"></i></button>
+            <button id="muteBtn" class="mute-btn"><i class="fas fa-volume-up"></i></button>
         </div>
     </div>
 
-    <!-- 404 Page -->
-    <div class="page-404" id="page404">
-        <div class="error-code">404</div>
-        <div class="error-message">Page Not Found</div>
-        <a href="#" class="back-home" id="backHome">Back to Home</a>
-    </div>
+    <!-- Аудио -->
+    <audio id="audioPlayer" src="songs/song1.mp3"></audio>
 
     <script>
-        // Supabase configuration
-        const supabaseUrl = 'https://sfrdsvcswqelifkqpcem.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmcmRzdmNzd3FlbGlma3FwY2VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTM5ODEsImV4cCI6MjA3OTAyOTk4MX0.jYqgJOMgnYzYRx05LF_JHlxf4OfOdsL3zUm5IQo_IT8';
-        
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // Custom cursor
-        const cursor = document.querySelector('.cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        // Snowflake creation
-        function createSnowflake(x, y) {
-            const snowflake = document.createElement('div');
-            snowflake.className = 'snowflake';
-            snowflake.innerHTML = '❄';
-            snowflake.style.left = x + 'px';
-            snowflake.style.top = y + 'px';
-            
-            const size = Math.random() * 8 + 4;
-            snowflake.style.fontSize = size + 'px';
-            
-            const duration = Math.random() * 3000 + 2000;
-            
-            snowflake.style.animation = `snowFall ${duration}ms linear forwards`;
-            
-            document.body.appendChild(snowflake);
-            
-            setTimeout(() => {
-                if (snowflake.parentNode) {
-                    snowflake.parentNode.removeChild(snowflake);
-                }
-            }, duration);
-        }
-
-        // Cursor snowflakes
-        let lastSnowflakeTime = 0;
-        document.addEventListener('mousemove', (e) => {
-            const now = Date.now();
-            if (now - lastSnowflakeTime > 50) {
-                createSnowflake(
-                    e.clientX + (Math.random() - 0.5) * 30, 
-                    e.clientY + (Math.random() - 0.5) * 20
-                );
-                lastSnowflakeTime = now;
-            }
-        });
-
-        // Background snowflakes
-        function createBackgroundSnowflakes() {
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    createSnowflake(
-                        Math.random() * window.innerWidth,
-                        Math.random() * -50
-                    );
-                }, Math.random() * 1000);
-            }
-        }
-
-        // Initialize background snow
-        createBackgroundSnowflakes();
-        setInterval(createBackgroundSnowflakes, 2000);
-
-        const loading = document.querySelector('.loading');
-        const loadingText = document.querySelector('.loading-text');
-        const clickAnywhere = document.querySelector('.click-anywhere');
-        const mainContent = document.querySelector('.main-content');
-        const background = document.querySelector('.background');
-        const musicToggle = document.getElementById('musicToggle');
-        const progressBar = document.getElementById('progressBar');
-        const progress = document.getElementById('progress');
-        const currentTime = document.getElementById('currentTime');
-        const totalTime = document.getElementById('totalTime');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumeLevel = document.getElementById('volumeLevel');
-        const volumeIcon = document.getElementById('volumeIcon');
-        const page404 = document.getElementById('page404');
-        const backHome = document.getElementById('backHome');
-        const songTitle = document.getElementById('songTitle');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const viewsCount = document.getElementById('viewsCount');
-
-        // ИСПРАВЛЕННЫЙ счетчик просмотров
-        async function updateViewCounter() {
-            try {
-                // Используем sessionStorage для отслеживания в рамках одной сессии
-                if (!sessionStorage.getItem('hasVisited')) {
-                    // Новый посетитель в этой сессии
-                    let views = parseInt(localStorage.getItem('profileViews')) || 0;
-                    views++;
-                    localStorage.setItem('profileViews', views.toString());
-                    sessionStorage.setItem('hasVisited', 'true');
-                    viewsCount.textContent = views;
-                } else {
-                    // Уже был в этой сессии, просто показываем текущее значение
-                    let views = parseInt(localStorage.getItem('profileViews')) || 1;
-                    viewsCount.textContent = views;
-                }
-                
-            } catch (error) {
-                console.error('Error updating view counter:', error);
-                viewsCount.textContent = '1';
-            }
-        }
-
-        // Audio setup with your songs
-        const songs = [
-            {
-                url: 'https://storage6.lightaudio.ru/dm/39a0e518/3bb50937/YNG%20ERETIK%20%E2%80%94%20%D0%A2%D0%A3%D0%9F%D0%9E%D0%92%D0%90%D0%A2.mp3',
-                title: 'туповат - Yng Eretik'
-            },
-            {
-                url: 'https://storage4.lightaudio.ru/dm/399a11ab/5987de6be/horoshiyagni%2C%20absolute%20love%20princess%20%E2%80%94%20%D0%BD%D0%BE%D0%BC%D0%B5%D1%80%20%28%40nightcorebot%29%20%28%40nightcorebot%29.mp3',
-                title: 'номер - horoshiyagni'
-            },
-            {
-                url: 'https://storage1.lightaudio.ru/dm/39a0a084/3bb508fc/BANEDRUG%20%E2%80%94%20%D0%9A%D0%9C%D0%A1.mp3',
-                title: 'KMC - BANEDRUG'
-            }
-        ];
-
-        const audio = new Audio();
+        const songProgress = document.getElementById('songProgress');
+        const bioCard = document.getElementById('bioCard');
+        const currentSongImage = document.getElementById('currentSongImage');
+        const currentSongTitle = document.getElementById('currentSongTitle');
+        const currentSongArtist = document.getElementById('currentSongArtist');
+        
+        // Список песен
+        const songItems = document.querySelectorAll('.song-item');
         let currentSongIndex = 0;
-        let isPlaying = false;
-        let isMuted = false;
-        let lastVolume = 0.7;
-        audio.volume = 0.7;
+        let wasPlaying = false;
 
-        // Функция для обновления иконки громкости - ИСПРАВЛЕННАЯ (без зачеркивания)
-        function updateVolumeIcon(volume) {
-            if (isMuted || volume === 0) {
-                volumeIcon.textContent = '🔇';
-            } else if (volume <= 0.1) {
-                volumeIcon.textContent = '🔈';
-            } else if (volume <= 0.5) {
-                volumeIcon.textContent = '🔉';
-            } else {
-                volumeIcon.textContent = '🔊';
-            }
-        }
-
-        // Функция для переключения mute/unmute
-        function toggleMute() {
-            if (isMuted) {
-                // Включаем звук
-                audio.volume = lastVolume;
-                isMuted = false;
-            } else {
-                // Выключаем звук
-                lastVolume = audio.volume;
-                audio.volume = 0;
-                isMuted = true;
-            }
-            updateVolumeIcon(audio.volume);
-            volumeLevel.style.width = `${audio.volume * 100}%`;
-        }
-
-        // Load song
-        function loadSong(index) {
-            currentSongIndex = index;
-            audio.src = songs[index].url;
-            songTitle.textContent = songs[index].title;
-            
-            // Reset progress
-            progress.style.width = '0%';
-            currentTime.textContent = '0:00';
-            totalTime.textContent = '0:00';
-            
-            // If was playing, play new song
-            if (isPlaying) {
-                audio.play().catch(e => {
-                    console.log("Audio play failed:", e);
+        // Воспроизведение / пауза музыки
+        playPauseBtn.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play().then(() => {
+                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }).catch(error => {
+                    console.log('Play error:', error);
                 });
-            }
-        }
-
-        // Format time function
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        // Update progress bar
-        function updateProgress() {
-            if (audio.duration) {
-                const progressPercent = (audio.currentTime / audio.duration) * 100;
-                progress.style.width = `${progressPercent}%`;
-                currentTime.textContent = formatTime(audio.currentTime);
-                totalTime.textContent = formatTime(audio.duration);
-            }
-        }
-
-        // Set progress on click
-        let isProgressDragging = false;
-        
-        progressBar.addEventListener('mousedown', (e) => {
-            isProgressDragging = true;
-            setProgress(e);
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (isProgressDragging) {
-                setProgress(e);
+            } else {
+                audioPlayer.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             }
         });
-        
-        document.addEventListener('mouseup', () => {
-            isProgressDragging = false;
-        });
-        
-        progressBar.addEventListener('click', (e) => {
-            setProgress(e);
-        });
-        
-        function setProgress(e) {
-            if (audio.duration) {
-                const rect = progressBar.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                const newTime = percent * audio.duration;
-                
-                audio.currentTime = newTime;
-                
-                if (isPlaying && audio.paused) {
-                    audio.play().catch(e => {
-                        console.log("Audio play failed:", e);
-                    });
-                }
-            }
-        }
 
-        // Volume control
-        let isVolumeDragging = false;
-        
-        volumeSlider.addEventListener('mousedown', (e) => {
-            isVolumeDragging = true;
-            updateVolume(e);
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (isVolumeDragging) {
-                updateVolume(e);
+        // Включение / отключение звука
+        muteBtn.addEventListener('click', () => {
+            if (audioPlayer.muted) {
+                audioPlayer.muted = false;
+                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                audioPlayer.muted = true;
+                muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
             }
         });
-        
-        document.addEventListener('mouseup', () => {
-            isVolumeDragging = false;
-        });
-        
-        volumeSlider.addEventListener('click', (e) => {
-            updateVolume(e);
-        });
-        
-        function updateVolume(e) {
-            const rect = volumeSlider.getBoundingClientRect();
-            let percent = (e.clientX - rect.left) / rect.width;
-            percent = Math.max(0, Math.min(1, percent));
-            
-            audio.volume = percent;
-            lastVolume = percent;
-            isMuted = false;
-            updateVolumeIcon(percent);
-            volumeLevel.style.width = `${percent * 100}%`;
-        }
 
-        // Клик по иконке громкости для mute/unmute
-        volumeIcon.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMute();
-        });
-
-        // Update volume level display
-        volumeLevel.style.width = `${audio.volume * 100}%`;
-        updateVolumeIcon(audio.volume);
-
-        // Song navigation
+        // Предыдущая песня
         prevBtn.addEventListener('click', () => {
-            const newIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-            loadSong(newIndex);
+            const prevIndex = (currentSongIndex - 1 + songItems.length) % songItems.length;
+            changeSong(prevIndex);
         });
 
+        // Следующая песня
         nextBtn.addEventListener('click', () => {
-            const newIndex = (currentSongIndex + 1) % songs.length;
-            loadSong(newIndex);
+            const nextIndex = (currentSongIndex + 1) % songItems.length;
+            changeSong(nextIndex);
         });
 
-        // Music toggle functionality
-        musicToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (isPlaying) {
-                audio.pause();
-                musicToggle.textContent = '▶';
-            } else {
-                audio.play().catch(e => {
-                    console.log("Audio play failed:", e);
-                });
-                musicToggle.textContent = '⏸';
+        // Эффект наклона при наведении на био-карту
+        bioCard.addEventListener('mousemove', (event) => {
+            const cardRect = bioCard.getBoundingClientRect();
+            const cardCenterX = cardRect.left + cardRect.width / 2;
+            const cardCenterY = cardRect.top + cardRect.height / 2;
+
+            const deltaX = event.clientX - cardCenterX;
+            const deltaY = event.clientY - cardCenterY;
+
+            const rotateX = deltaY / 20;
+            const rotateY = -deltaX / 20;
+
+            bioCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        bioCard.addEventListener('mouseleave', () => {
+            bioCard.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        });
+
+        // Обновление ползунка прогресса
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (audioPlayer.duration) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                songProgress.value = progress;
             }
-            isPlaying = !isPlaying;
         });
 
-        // Audio event listeners
-        audio.addEventListener('loadedmetadata', () => {
-            totalTime.textContent = formatTime(audio.duration);
+        // Перемотка песни
+        songProgress.addEventListener('input', () => {
+            if (audioPlayer.duration) {
+                const progress = songProgress.value;
+                audioPlayer.currentTime = (progress / 100) * audioPlayer.duration;
+            }
         });
 
-        audio.addEventListener('timeupdate', updateProgress);
-
-        audio.addEventListener('ended', () => {
-            const nextIndex = (currentSongIndex + 1) % songs.length;
-            loadSong(nextIndex);
+        // Загрузка метаданных для корректной работы прогресса
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            songProgress.value = 0;
         });
 
-        // 404 page functionality
-        backHome.addEventListener('click', (e) => {
-            e.preventDefault();
-            page404.style.display = 'none';
+        // Открытие второй био-карты
+        const showDetailsBtn = document.getElementById('showDetailsBtn');
+        const hideDetailsBtn = document.getElementById('hideDetailsBtn');
+        const bioCardDetails = document.getElementById('bioCardDetails');
+
+        showDetailsBtn.addEventListener('click', () => {
+            bioCardDetails.style.right = '20px';
         });
 
-        // Loading countdown
-        let timeLeft = 2;
-        const countdown = setInterval(() => {
-            timeLeft--;
-            loadingText.textContent = `LOADING: ${timeLeft}s`;
+        hideDetailsBtn.addEventListener('click', () => {
+            bioCardDetails.style.right = '-500px';
+        });
+
+        // Функция для смены песни
+        function changeSong(songIndex) {
+            // Сохраняем состояние воспроизведения
+            wasPlaying = !audioPlayer.paused;
             
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                loading.style.display = 'none';
-                clickAnywhere.style.display = 'block';
-            }
-        }, 1000);
-
-        // Click to enter
-        let hasClicked = false;
-        document.addEventListener('click', (e) => {
-            if (!hasClicked && timeLeft <= 0 && !e.target.closest('a') && !e.target.closest('.music-player')) {
-                hasClicked = true;
-                clickAnywhere.style.display = 'none';
-                mainContent.style.display = 'block';
-                mainContent.classList.add('show');
-                
-                // Update view counter
-                updateViewCounter();
-                
-                // Load first song and auto-play
-                loadSong(0);
-                if (!isPlaying) {
-                    audio.play().then(() => {
-                        isPlaying = true;
-                        musicToggle.textContent = '⏸';
-                    }).catch(e => {
-                        console.log("Audio play failed:", e);
+            // Пауза текущей песни
+            audioPlayer.pause();
+            
+            // Обновляем активный элемент в списке
+            songItems.forEach(item => item.classList.remove('active'));
+            songItems[songIndex].classList.add('active');
+            
+            // Получаем данные о песне
+            const songItem = songItems[songIndex];
+            const songSrc = songItem.getAttribute('data-song');
+            const songImage = songItem.getAttribute('data-image');
+            const songTitle = songItem.getAttribute('data-title');
+            const songArtist = songItem.getAttribute('data-artist');
+            
+            // Обновляем плеер
+            audioPlayer.src = songSrc;
+            currentSongImage.src = songImage;
+            currentSongTitle.textContent = songTitle;
+            currentSongArtist.textContent = songArtist;
+            
+            // Сбрасываем прогресс
+            songProgress.value = 0;
+            
+            // Загружаем новую песню
+            audioPlayer.load();
+            
+            // Восстанавливаем состояние воспроизведения после загрузки
+            audioPlayer.addEventListener('canplaythrough', function onCanPlay() {
+                if (wasPlaying) {
+                    audioPlayer.play().then(() => {
+                        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    }).catch(error => {
+                        console.log('Autoplay prevented:', error);
+                        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
                     });
+                } else {
+                    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
                 }
+                audioPlayer.removeEventListener('canplaythrough', onCanPlay);
+            }, { once: true });
+            
+            currentSongIndex = songIndex;
+        }
+
+        // Добавляем обработчики для элементов списка песен
+        songItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                changeSong(index);
+            });
+        });
+
+        // Автоматическое переключение на следующую песню
+        audioPlayer.addEventListener('ended', () => {
+            const nextIndex = (currentSongIndex + 1) % songItems.length;
+            changeSong(nextIndex);
+        });
+
+        // Горячие клавиши для управления музыкой
+        document.addEventListener('keydown', (event) => {
+            // Пробел - воспроизведение/пауза
+            if (event.code === 'Space' && !event.target.matches('input, button, a')) {
+                event.preventDefault();
+                playPauseBtn.click();
+            }
+            // Стрелка влево - предыдущая песня
+            else if (event.code === 'ArrowLeft' && !event.target.matches('input, button, a')) {
+                event.preventDefault();
+                prevBtn.click();
+            }
+            // Стрелка вправо - следующая песня
+            else if (event.code === 'ArrowRight' && !event.target.matches('input, button, a')) {
+                event.preventDefault();
+                nextBtn.click();
             }
         });
 
-        // Parallax effect
-        document.addEventListener('mousemove', (e) => {
-            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
-            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
-            background.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        // Обработка ошибок загрузки аудио
+        audioPlayer.addEventListener('error', (e) => {
+            console.error('Audio loading error:', e);
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         });
-
-        // Initialize
-        loadSong(0);
     </script>
 </body>
 </html>
