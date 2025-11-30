@@ -488,7 +488,6 @@
         const currentSongTitle = document.getElementById('currentSongTitle');
         const currentSongArtist = document.getElementById('currentSongArtist');
         const loadingIndicator = document.getElementById('loadingIndicator');
-        const repeatTooltip = document.querySelector('.repeat-tooltip');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
@@ -685,7 +684,7 @@
             });
         });
 
-        // Автоматическое переключение на следующую песню
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ: Автоматическое переключение на следующую песню
         audioPlayer.addEventListener('ended', () => {
             // В зависимости от режима повтора
             switch(repeatMode) {
@@ -695,9 +694,20 @@
                     audioPlayer.play();
                     break;
                 case REPEAT_MODES.ALL:
-                    // Повтор всего плейлиста
+                    // Повтор всего плейлиста - ВСЕГДА переходим к следующей песне
                     const nextIndex = (currentSongIndex + 1) % songItems.length;
                     changeSong(nextIndex);
+                    
+                    // Автоматически воспроизводим следующую песню
+                    setTimeout(() => {
+                        if (audioPlayer.paused) {
+                            audioPlayer.play().then(() => {
+                                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                            }).catch(error => {
+                                console.log('Autoplay prevented:', error);
+                            });
+                        }
+                    }, 100);
                     break;
                 case REPEAT_MODES.OFF:
                 default:
@@ -705,6 +715,17 @@
                     if (currentSongIndex < songItems.length - 1) {
                         const nextIndex = currentSongIndex + 1;
                         changeSong(nextIndex);
+                        
+                        // Автоматически воспроизводим следующую песню
+                        setTimeout(() => {
+                            if (audioPlayer.paused) {
+                                audioPlayer.play().then(() => {
+                                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                                }).catch(error => {
+                                    console.log('Autoplay prevented:', error);
+                                });
+                            }
+                        }, 100);
                     } else {
                         // Если это последняя песня, остановить воспроизведение
                         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
