@@ -359,6 +359,43 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Стили для кнопки повтора */
+        .music-player .repeat-btn {
+            color: #cccccc;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .music-player .repeat-btn:hover {
+            color: #ffffff;
+        }
+
+        .music-player .repeat-btn.active {
+            color: #1db954;
+        }
+
+        .music-player .repeat-btn .repeat-tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .music-player .repeat-btn:hover .repeat-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -427,6 +464,10 @@
             <button id="prevBtn" class="prev-btn" title="Previous song"><i class="fas fa-step-backward"></i></button>
             <button id="playPauseBtn" class="play-btn"><i class="fas fa-play"></i></button>
             <button id="nextBtn" class="next-btn" title="Next song"><i class="fas fa-step-forward"></i></button>
+            <button id="repeatBtn" class="repeat-btn" title="Repeat: Off">
+                <i class="fas fa-redo"></i>
+                <span class="repeat-tooltip">Repeat: Off</span>
+            </button>
             <button id="muteBtn" class="mute-btn"><i class="fas fa-volume-up"></i></button>
         </div>
     </div>
@@ -440,17 +481,28 @@
         const muteBtn = document.getElementById('muteBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
+        const repeatBtn = document.getElementById('repeatBtn');
         const songProgress = document.getElementById('songProgress');
         const bioCard = document.getElementById('bioCard');
         const currentSongImage = document.getElementById('currentSongImage');
         const currentSongTitle = document.getElementById('currentSongTitle');
         const currentSongArtist = document.getElementById('currentSongArtist');
         const loadingIndicator = document.getElementById('loadingIndicator');
+        const repeatTooltip = document.querySelector('.repeat-tooltip');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
         let currentSongIndex = 0;
         let wasPlaying = false;
+        
+        // Режимы повтора
+        const REPEAT_MODES = {
+            OFF: 0,
+            ONE: 1,
+            ALL: 2
+        };
+        
+        let repeatMode = REPEAT_MODES.OFF;
 
         // Воспроизведение / пауза музыки
         playPauseBtn.addEventListener('click', () => {
@@ -488,6 +540,33 @@
             const nextIndex = (currentSongIndex + 1) % songItems.length;
             changeSong(nextIndex);
         });
+
+        // Кнопка повтора
+        repeatBtn.addEventListener('click', () => {
+            // Переключаем режимы повтора
+            repeatMode = (repeatMode + 1) % 3;
+            
+            // Обновляем иконку и подсказку
+            updateRepeatButton();
+        });
+
+        // Обновление кнопки повтора
+        function updateRepeatButton() {
+            switch(repeatMode) {
+                case REPEAT_MODES.OFF:
+                    repeatBtn.innerHTML = '<i class="fas fa-redo"></i><span class="repeat-tooltip">Repeat: Off</span>';
+                    repeatBtn.classList.remove('active');
+                    break;
+                case REPEAT_MODES.ONE:
+                    repeatBtn.innerHTML = '<i class="fas fa-redo"></i><span class="repeat-tooltip">Repeat: One</span>';
+                    repeatBtn.classList.add('active');
+                    break;
+                case REPEAT_MODES.ALL:
+                    repeatBtn.innerHTML = '<i class="fas fa-redo"></i><span class="repeat-tooltip">Repeat: All</span>';
+                    repeatBtn.classList.add('active');
+                    break;
+            }
+        }
 
         // Эффект наклона при наведении на био-карту
         bioCard.addEventListener('mousemove', (event) => {
@@ -608,8 +687,30 @@
 
         // Автоматическое переключение на следующую песню
         audioPlayer.addEventListener('ended', () => {
-            const nextIndex = (currentSongIndex + 1) % songItems.length;
-            changeSong(nextIndex);
+            // В зависимости от режима повтора
+            switch(repeatMode) {
+                case REPEAT_MODES.ONE:
+                    // Повтор одной песни
+                    audioPlayer.currentTime = 0;
+                    audioPlayer.play();
+                    break;
+                case REPEAT_MODES.ALL:
+                    // Повтор всего плейлиста
+                    const nextIndex = (currentSongIndex + 1) % songItems.length;
+                    changeSong(nextIndex);
+                    break;
+                case REPEAT_MODES.OFF:
+                default:
+                    // Без повтора - перейти к следующей песне, если это не последняя
+                    if (currentSongIndex < songItems.length - 1) {
+                        const nextIndex = currentSongIndex + 1;
+                        changeSong(nextIndex);
+                    } else {
+                        // Если это последняя песня, остановить воспроизведение
+                        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    }
+                    break;
+            }
         });
 
         // Горячие клавиши для управления музыкой
@@ -628,6 +729,11 @@
             else if (event.code === 'ArrowRight' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 nextBtn.click();
+            }
+            // R - переключение режима повтора
+            else if (event.code === 'KeyR' && !event.target.matches('input, button, a')) {
+                event.preventDefault();
+                repeatBtn.click();
             }
         });
 
