@@ -402,13 +402,17 @@
             height: 100%;
             z-index: -1;
             background: linear-gradient(45deg, #121212, #1a1a2e, #16213e);
+            display: none; /* Скрыт по умолчанию */
         }
     </style>
 </head>
 <body>
-    <!-- Видео фон -->
-    <video autoplay muted loop class="video-background" id="backgroundVideo">
+    <!-- Видео фон с альтернативным источником -->
+    <video autoplay muted loop playsinline class="video-background" id="backgroundVideo">
+        <!-- Основной источник -->
         <source src="background.mp4" type="video/mp4">
+        <!-- Альтернативный источник на случай, если первый не работает -->
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     
@@ -498,6 +502,7 @@
         const currentSongArtist = document.getElementById('currentSongArtist');
         const loadingIndicator = document.getElementById('loadingIndicator');
         const backgroundVideo = document.getElementById('backgroundVideo');
+        const videoFallback = document.getElementById('videoFallback');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
@@ -514,10 +519,28 @@
         let repeatMode = REPEAT_MODES.OFF;
 
         // Проверка загрузки фонового видео
+        backgroundVideo.addEventListener('loadeddata', function() {
+            console.log('Video loaded successfully');
+        });
+
         backgroundVideo.addEventListener('error', function(e) {
             console.warn('Background video failed to load. Showing fallback background.');
-            document.getElementById('videoFallback').style.display = 'block';
+            videoFallback.style.display = 'block';
+            
+            // Пытаемся использовать альтернативное видео
+            setTimeout(() => {
+                // Если есть альтернативные источники, они уже указаны в теге video
+                console.log('Trying to play alternative video source');
+            }, 1000);
         });
+
+        // Проверка через 3 секунды, загрузилось ли видео
+        setTimeout(() => {
+            if (backgroundVideo.readyState < 2) { // Меньше 2 означает не загружено
+                console.warn('Video not loaded after 3 seconds, showing fallback');
+                videoFallback.style.display = 'block';
+            }
+        }, 3000);
 
         // Воспроизведение / пауза музыки
         playPauseBtn.addEventListener('click', () => {
