@@ -7,6 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -18,17 +24,41 @@
             align-items: center;
             height: 100vh;
             flex-direction: column;
-            background-color: #121212;
+            position: relative;
+            min-height: 100vh;
         }
 
-        /* Видео на фон */
-        .video-background {
-            position: absolute;
+        /* Видео фон с фолбэком */
+        #video-background {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: -1;
             object-fit: cover;
+        }
+
+        /* Фолбэк если видео не загрузится */
+        .fallback-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+        }
+
+        /* Затемнение видео для лучшей читаемости */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
 
@@ -36,38 +66,44 @@
         .bio-card {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
-            padding: 20px;
+            padding: 30px;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease-out;
             transform-style: preserve-3d;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             position: relative;
             z-index: 1;
+            border: 1px solid rgba(255, 183, 50, 0.3);
+            margin: 20px;
         }
 
         .bio-card img {
             border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            margin-bottom: 15px;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
             transition: transform 0.3s;
-            border: 2px solid #ffb732;
+            border: 3px solid #ffb732;
+            object-fit: cover;
         }
 
         .bio-card h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
+            color: #ffb732;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
         }
 
         .bio-card p {
-            margin: 10px 0;
-            font-size: 16px;
+            margin: 15px 0;
+            font-size: 18px;
             white-space: nowrap;
             overflow: hidden;
-            border-right: 2px solid white;
+            border-right: 2px solid #ffb732;
             width: 100%;
             display: inline-block;
             box-sizing: border-box;
@@ -96,23 +132,19 @@
         .social-icons a {
             color: white;
             font-size: 32px;
-            transition: color 0.3s, transform 0.3s;
+            transition: all 0.3s;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .social-icons a:hover {
-            transform: scale(1.1);
-        }
-
-        .social-icons a.telegram:hover {
-            color: #0078b4;
-        }
-
-        .social-icons a.discord {
-            color: #5865F2;
-        }
-
-        .social-icons a.discord:hover {
-            color: #4e5dbf;
+            transform: scale(1.1) translateY(-5px);
+            background: rgba(255, 183, 50, 0.2);
         }
 
         .social-icons a.info-btn {
@@ -123,13 +155,13 @@
             color: #ff9f00;
         }
 
-        /* Всплывающие подсказки при наведении */
+        /* Всплывающие подсказки */
         .social-icons a .tooltip {
             position: absolute;
             bottom: -35px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 5px 10px;
             border-radius: 10px;
@@ -138,6 +170,7 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             white-space: nowrap;
+            z-index: 100;
         }
 
         .social-icons a:hover .tooltip {
@@ -147,19 +180,21 @@
 
         /* Музыкальный плеер */
         .music-player {
-            width: 80%;
+            width: 90%;
             max-width: 500px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             padding: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            position: absolute;
+            position: fixed;
             bottom: 20px;
             display: flex;
             align-items: center;
             gap: 20px;
             z-index: 2;
             animation: slide-up 1s ease-in-out;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 183, 50, 0.2);
         }
 
         @keyframes slide-up {
@@ -170,21 +205,36 @@
         .music-player .song-info {
             flex-grow: 1;
             color: white;
+            min-width: 0;
         }
 
         .music-player .song-info p {
             margin: 0;
-            font-size: 18px;
+            font-size: 16px;
             text-align: left;
             border: none;
             animation: none;
-            white-space: normal;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #currentSongTitle {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        #currentSongArtist {
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         .music-player img {
             width: 50px;
             height: 50px;
             border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
         }
 
         .music-player .progress-container {
@@ -199,6 +249,7 @@
             height: 5px;
             outline: none;
             -webkit-appearance: none;
+            cursor: pointer;
         }
 
         .music-player input[type="range"]::-webkit-slider-thumb {
@@ -208,6 +259,12 @@
             border-radius: 50%;
             background: #1db954;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .music-player input[type="range"]::-webkit-slider-thumb:hover {
+            background: #1ed760;
+            transform: scale(1.2);
         }
 
         .music-player input[type="range"]::-webkit-slider-track {
@@ -218,21 +275,30 @@
 
         .music-player .buttons {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .music-player button {
             background: none;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .music-player button:hover {
             transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .music-player .mute-btn {
@@ -241,12 +307,14 @@
 
         .music-player .play-btn {
             color: #ffb732;
+            background: rgba(255, 183, 50, 0.1);
+            font-size: 24px;
         }
 
         .music-player .prev-btn,
         .music-player .next-btn {
             color: #cccccc;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .music-player .prev-btn:hover,
@@ -258,40 +326,62 @@
         .bio-card-details {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             max-width: 400px;
             text-align: left;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            position: absolute;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: fixed;
             top: 50%;
-            right: -500px; /* Изначально скрыта справа */
+            right: -500px; /* Скрыта справа */
             transform: translateY(-50%);
             transition: right 0.5s ease-in-out;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 183, 50, 0.2);
+            z-index: 3;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .bio-card-details h2 {
-            font-size: 22px;
+            font-size: 24px;
             margin: 10px 0;
+            color: #ffb732;
         }
 
         .bio-card-details p {
             font-size: 16px;
             margin: 5px 0;
+            border: none;
+            animation: none;
+            white-space: normal;
+        }
+
+        .bio-card-details strong {
+            color: #ffb732;
         }
 
         /* Кнопка для открытия второй карты */
         .show-details-btn {
-            background: none;
-            border: none;
+            background: rgba(255, 183, 50, 0.1);
+            border: 1px solid rgba(255, 183, 50, 0.3);
             color: white;
-            font-size: 24px;
+            font-size: 16px;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
         }
 
         .show-details-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.02);
+            background: rgba(255, 183, 50, 0.2);
+            border-color: rgba(255, 183, 50, 0.5);
         }
 
         /* Стили для списка песен */
@@ -299,45 +389,57 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .song-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            border: 1px solid transparent;
         }
 
         .song-item:hover {
             background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 183, 50, 0.3);
         }
 
         .song-item.active {
             background-color: rgba(29, 185, 84, 0.3);
+            border-color: rgba(29, 185, 84, 0.5);
         }
 
         .song-item img {
             width: 40px;
             height: 40px;
             border-radius: 5px;
+            object-fit: cover;
+            flex-shrink: 0;
         }
 
         .song-item .song-details {
             flex-grow: 1;
+            min-width: 0;
         }
 
         .song-item .song-title {
             font-weight: 600;
             font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .song-item .song-artist {
             font-size: 12px;
             opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Индикатор загрузки */
@@ -359,7 +461,7 @@
         /* Стили для кнопки повтора */
         .music-player .repeat-btn {
             color: #cccccc;
-            font-size: 20px;
+            font-size: 18px;
             position: relative;
         }
 
@@ -376,7 +478,7 @@
             bottom: -40px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 5px 10px;
             border-radius: 10px;
@@ -392,36 +494,69 @@
             visibility: visible;
             opacity: 1;
         }
-        
-        /* Фолбэк для видео */
-        .video-fallback {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: linear-gradient(45deg, #121212, #1a1a2e, #16213e);
-            display: none; /* Скрыт по умолчанию */
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .bio-card {
+                max-width: 90%;
+                padding: 20px;
+            }
+            
+            .music-player {
+                width: 95%;
+                flex-wrap: wrap;
+                gap: 10px;
+                bottom: 10px;
+            }
+            
+            .music-player .buttons {
+                order: 1;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .music-player .song-info {
+                order: 2;
+                width: 100%;
+            }
+            
+            .bio-card-details {
+                max-width: 90%;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                right: auto;
+                transform: translate(-50%, -50%);
+                display: none;
+            }
+            
+            .bio-card-details.active {
+                display: block;
+            }
+        }
+
+        /* Скрыть полосу прокрутки */
+        ::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Видео фон с альтернативным источником -->
-    <video autoplay muted loop playsinline class="video-background" id="backgroundVideo">
-        <!-- Основной источник -->
+    <!-- Видео фон -->
+    <video id="video-background" autoplay muted loop playsinline>
         <source src="background.mp4" type="video/mp4">
-        <!-- Альтернативный источник на случай, если первый не работает -->
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-flowers-1173-large.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+        Ваш браузер не поддерживает видео.
     </video>
     
-    <!-- Фолбэк на случай, если видео не загрузится -->
-    <div class="video-fallback" id="videoFallback"></div>
+    <!-- Фолбэк фон -->
+    <div class="fallback-bg" id="fallbackBg"></div>
+    
+    <!-- Затемнение для видео -->
+    <div class="overlay"></div>
 
     <!-- Первая био-карта -->
     <div class="bio-card" id="bioCard">
-        <img src="https://i.ibb.co/wZCDM2Yv/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="Profile Image">
+        <img src="https://i.ibb.co/wZCDM2Yv/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="Profile Image" onerror="this.src='https://via.placeholder.com/120x120/ffb732/000000?text=XD1MPLE'">
         <h1>xd1mple</h1>
         <p>Hello, I am xd1mple. I unknown user</p>
      
@@ -457,7 +592,6 @@
             </div>
         </div>
         
-        <p><strong> </strong> ㅤ</p>
         <button class="show-details-btn" id="hideDetailsBtn">
             <i class="fas fa-arrow-left"></i> Hide Details
         </button>
@@ -501,8 +635,11 @@
         const currentSongTitle = document.getElementById('currentSongTitle');
         const currentSongArtist = document.getElementById('currentSongArtist');
         const loadingIndicator = document.getElementById('loadingIndicator');
-        const backgroundVideo = document.getElementById('backgroundVideo');
-        const videoFallback = document.getElementById('videoFallback');
+        const videoBackground = document.getElementById('video-background');
+        const fallbackBg = document.getElementById('fallbackBg');
+        const showDetailsBtn = document.getElementById('showDetailsBtn');
+        const hideDetailsBtn = document.getElementById('hideDetailsBtn');
+        const bioCardDetails = document.getElementById('bioCardDetails');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
@@ -518,29 +655,31 @@
         
         let repeatMode = REPEAT_MODES.OFF;
 
-        // Проверка загрузки фонового видео
-        backgroundVideo.addEventListener('loadeddata', function() {
+        // Проверка видео
+        videoBackground.addEventListener('loadeddata', function() {
             console.log('Video loaded successfully');
+            videoBackground.play().catch(e => {
+                console.log('Autoplay prevented:', e);
+            });
         });
 
-        backgroundVideo.addEventListener('error', function(e) {
-            console.warn('Background video failed to load. Showing fallback background.');
-            videoFallback.style.display = 'block';
-            
-            // Пытаемся использовать альтернативное видео
-            setTimeout(() => {
-                // Если есть альтернативные источники, они уже указаны в теге video
-                console.log('Trying to play alternative video source');
-            }, 1000);
+        videoBackground.addEventListener('error', function(e) {
+            console.error('Video loading error:', e);
+            showFallbackBackground();
         });
 
-        // Проверка через 3 секунды, загрузилось ли видео
+        // Проверка через 2 секунды
         setTimeout(() => {
-            if (backgroundVideo.readyState < 2) { // Меньше 2 означает не загружено
-                console.warn('Video not loaded after 3 seconds, showing fallback');
-                videoFallback.style.display = 'block';
+            if (videoBackground.readyState < 2) {
+                console.warn('Video not loaded after 2 seconds');
+                showFallbackBackground();
             }
-        }, 3000);
+        }, 2000);
+
+        function showFallbackBackground() {
+            console.log('Showing fallback background');
+            fallbackBg.style.display = 'block';
+        }
 
         // Воспроизведение / пауза музыки
         playPauseBtn.addEventListener('click', () => {
@@ -647,10 +786,6 @@
         });
 
         // Открытие второй био-карты
-        const showDetailsBtn = document.getElementById('showDetailsBtn');
-        const hideDetailsBtn = document.getElementById('hideDetailsBtn');
-        const bioCardDetails = document.getElementById('bioCardDetails');
-
         showDetailsBtn.addEventListener('click', () => {
             bioCardDetails.style.right = '20px';
         });
@@ -723,21 +858,17 @@
             });
         });
 
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ: Автоматическое переключение на следующую песню
+        // Автоматическое переключение на следующую песню
         audioPlayer.addEventListener('ended', () => {
-            // В зависимости от режима повтора
             switch(repeatMode) {
                 case REPEAT_MODES.ONE:
-                    // Повтор одной песни
                     audioPlayer.currentTime = 0;
                     audioPlayer.play();
                     break;
                 case REPEAT_MODES.ALL:
-                    // Повтор всего плейлиста - ВСЕГДА переходим к следующей песне
                     const nextIndex = (currentSongIndex + 1) % songItems.length;
                     changeSong(nextIndex);
                     
-                    // Автоматически воспроизводим следующую песню
                     setTimeout(() => {
                         if (audioPlayer.paused) {
                             audioPlayer.play().then(() => {
@@ -750,12 +881,10 @@
                     break;
                 case REPEAT_MODES.OFF:
                 default:
-                    // Без повтора - перейти к следующей песне, если это не последняя
                     if (currentSongIndex < songItems.length - 1) {
                         const nextIndex = currentSongIndex + 1;
                         changeSong(nextIndex);
                         
-                        // Автоматически воспроизводим следующую песню
                         setTimeout(() => {
                             if (audioPlayer.paused) {
                                 audioPlayer.play().then(() => {
@@ -766,31 +895,26 @@
                             }
                         }, 100);
                     } else {
-                        // Если это последняя песня, остановить воспроизведение
                         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
                     }
                     break;
             }
         });
 
-        // Горячие клавиши для управления музыкой
+        // Горячие клавиши
         document.addEventListener('keydown', (event) => {
-            // Пробел - воспроизведение/пауза
             if (event.code === 'Space' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 playPauseBtn.click();
             }
-            // Стрелка влево - предыдущая песня
             else if (event.code === 'ArrowLeft' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 prevBtn.click();
             }
-            // Стрелка вправо - следующая песня
             else if (event.code === 'ArrowRight' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 nextBtn.click();
             }
-            // R - переключение режима повтора
             else if (event.code === 'KeyR' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 repeatBtn.click();
@@ -804,17 +928,16 @@
             loadingIndicator.style.display = 'none';
             playPauseBtn.disabled = false;
             
-            // Показываем сообщение об ошибке
             currentSongTitle.textContent = 'Error loading song';
             currentSongArtist.textContent = 'Please try again';
         });
 
-        // Индикатор загрузки при первом запуске
+        // Индикатор загрузки
         audioPlayer.addEventListener('loadstart', () => {
             loadingIndicator.style.display = 'inline-block';
         });
 
-        // Предзагрузка следующей песни для плавного переключения
+        // Предзагрузка следующей песни
         function preloadNextSong() {
             const nextIndex = (currentSongIndex + 1) % songItems.length;
             const nextSong = songItems[nextIndex].getAttribute('data-song');
@@ -823,8 +946,16 @@
             preloadAudio.load();
         }
 
-        // Начинаем предзагрузку
         preloadNextSong();
+        
+        // Убедимся, что видео воспроизводится
+        setTimeout(() => {
+            if (videoBackground.paused) {
+                videoBackground.play().catch(e => {
+                    console.log('Video play failed:', e);
+                });
+            }
+        }, 1000);
     </script>
 </body>
 </html>
