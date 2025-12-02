@@ -392,14 +392,28 @@
             visibility: visible;
             opacity: 1;
         }
+        
+        /* Фолбэк для видео */
+        .video-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #121212, #1a1a2e, #16213e);
+        }
     </style>
 </head>
 <body>
     <!-- Видео фон -->
-    <video autoplay muted loop class="video-background">
-        <source src="https://pouch.jumpshare.com/preview/v3aJ3xZHsR_oo_0wl-ozhOQy3B0INLNP5u-Ou1Euw5U3p53X-mts5rZyWp67v2Yzbr4TgWybJDjiaZpyg3wNGkOq32RHPWxVcaSVpThr4N5MjP0i8Wvr8toF8NbXHuCZOXeHaUz0sEdANjKO6mN0Tm6yjbN-I2pg_cnoHs_AmgI.mp4" type="video/mp4">
+    <video autoplay muted loop class="video-background" id="backgroundVideo">
+        <source src="background.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    
+    <!-- Фолбэк на случай, если видео не загрузится -->
+    <div class="video-fallback" id="videoFallback"></div>
 
     <!-- Первая био-карта -->
     <div class="bio-card" id="bioCard">
@@ -449,7 +463,7 @@
     <div class="music-player" id="musicPlayer">
         <img src="https://cover.lightaudio.ru/00304a5156ae83404060bf4ea5b17162b7be4abf6e5659795291af50785e4e5a5eaf5441b5a1b96071507041ab78598970715e89b75a6679be4a616e76be999860f25dfcecb44d8cc2a4d2e4d2b27d23534d3bdce2b2.jpg" alt="Song Image" id="currentSongImage">
         <div class="song-info">
-            <p id="currentSongTitle">туповат</p>
+            <p id="currentSongTitle">туповат (speed up)</p>
             <p id="currentSongArtist">Yng Eretik</p>
             <div class="progress-container">
                 <input type="range" id="songProgress" value="0" max="100">
@@ -483,6 +497,7 @@
         const currentSongTitle = document.getElementById('currentSongTitle');
         const currentSongArtist = document.getElementById('currentSongArtist');
         const loadingIndicator = document.getElementById('loadingIndicator');
+        const backgroundVideo = document.getElementById('backgroundVideo');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
@@ -497,6 +512,12 @@
         };
         
         let repeatMode = REPEAT_MODES.OFF;
+
+        // Проверка загрузки фонового видео
+        backgroundVideo.addEventListener('error', function(e) {
+            console.warn('Background video failed to load. Showing fallback background.');
+            document.getElementById('videoFallback').style.display = 'block';
+        });
 
         // Воспроизведение / пауза музыки
         playPauseBtn.addEventListener('click', () => {
