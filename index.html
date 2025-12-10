@@ -3,16 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xd1mple | biography</title>
+    <title>avtozill biography</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             margin: 0;
             padding: 0;
@@ -24,41 +18,17 @@
             align-items: center;
             height: 100vh;
             flex-direction: column;
-            position: relative;
-            min-height: 100vh;
+            background-color: #121212;
         }
 
-        /* Видео фон с фолбэком */
-        #video-background {
-            position: fixed;
+        /* Видео на фон */
+        .video-background {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
             object-fit: cover;
-        }
-
-        /* Фолбэк если видео не загрузится */
-        .fallback-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: none;
-        }
-
-        /* Затемнение видео для лучшей читаемости */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
 
@@ -66,44 +36,38 @@
         .bio-card {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
-            padding: 30px;
+            padding: 20px;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease-out;
             transform-style: preserve-3d;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
             position: relative;
             z-index: 1;
-            border: 1px solid rgba(255, 183, 50, 0.3);
-            margin: 20px;
         }
 
         .bio-card img {
             border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
             transition: transform 0.3s;
-            border: 3px solid #ffb732;
-            object-fit: cover;
+            border: 2px solid #ffb732;
         }
 
         .bio-card h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
-            color: #ffb732;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            margin-bottom: 10px;
         }
 
         .bio-card p {
-            margin: 15px 0;
-            font-size: 18px;
+            margin: 10px 0;
+            font-size: 16px;
             white-space: nowrap;
             overflow: hidden;
-            border-right: 2px solid #ffb732;
+            border-right: 2px solid white;
             width: 100%;
             display: inline-block;
             box-sizing: border-box;
@@ -132,19 +96,27 @@
         .social-icons a {
             color: white;
             font-size: 32px;
-            transition: all 0.3s;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            transition: color 0.3s, transform 0.3s;
         }
 
         .social-icons a:hover {
-            transform: scale(1.1) translateY(-5px);
-            background: rgba(255, 183, 50, 0.2);
+            transform: scale(1.1);
+        }
+
+        .social-icons a.telegram {
+            color: #0088cc;
+        }
+
+        .social-icons a.telegram:hover {
+            color: #0078b4;
+        }
+
+        .social-icons a.discord {
+            color: #5865F2;
+        }
+
+        .social-icons a.discord:hover {
+            color: #4e5dbf;
         }
 
         .social-icons a.info-btn {
@@ -155,13 +127,13 @@
             color: #ff9f00;
         }
 
-        /* Всплывающие подсказки */
+        /* Всплывающие подсказки при наведении */
         .social-icons a .tooltip {
             position: absolute;
             bottom: -35px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.7);
             color: white;
             padding: 5px 10px;
             border-radius: 10px;
@@ -170,7 +142,6 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             white-space: nowrap;
-            z-index: 100;
         }
 
         .social-icons a:hover .tooltip {
@@ -180,21 +151,19 @@
 
         /* Музыкальный плеер */
         .music-player {
-            width: 90%;
+            width: 80%;
             max-width: 500px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             padding: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            position: fixed;
+            position: absolute;
             bottom: 20px;
             display: flex;
             align-items: center;
             gap: 20px;
             z-index: 2;
             animation: slide-up 1s ease-in-out;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 183, 50, 0.2);
         }
 
         @keyframes slide-up {
@@ -205,36 +174,21 @@
         .music-player .song-info {
             flex-grow: 1;
             color: white;
-            min-width: 0;
         }
 
         .music-player .song-info p {
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
             text-align: left;
             border: none;
             animation: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        #currentSongTitle {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        #currentSongArtist {
-            font-size: 12px;
-            opacity: 0.8;
+            white-space: normal;
         }
 
         .music-player img {
             width: 50px;
             height: 50px;
             border-radius: 10px;
-            object-fit: cover;
-            flex-shrink: 0;
         }
 
         .music-player .progress-container {
@@ -249,7 +203,6 @@
             height: 5px;
             outline: none;
             -webkit-appearance: none;
-            cursor: pointer;
         }
 
         .music-player input[type="range"]::-webkit-slider-thumb {
@@ -259,12 +212,6 @@
             border-radius: 50%;
             background: #1db954;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .music-player input[type="range"]::-webkit-slider-thumb:hover {
-            background: #1ed760;
-            transform: scale(1.2);
         }
 
         .music-player input[type="range"]::-webkit-slider-track {
@@ -275,30 +222,21 @@
 
         .music-player .buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
-            flex-shrink: 0;
         }
 
         .music-player button {
             background: none;
             border: none;
             color: white;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.3s;
-            padding: 5px;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.3s;
         }
 
         .music-player button:hover {
             transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.1);
         }
 
         .music-player .mute-btn {
@@ -307,14 +245,12 @@
 
         .music-player .play-btn {
             color: #ffb732;
-            background: rgba(255, 183, 50, 0.1);
-            font-size: 24px;
         }
 
         .music-player .prev-btn,
         .music-player .next-btn {
             color: #cccccc;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .music-player .prev-btn:hover,
@@ -326,62 +262,40 @@
         .bio-card-details {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             max-width: 400px;
             text-align: left;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            position: fixed;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            position: absolute;
             top: 50%;
-            right: -500px; /* Скрыта справа */
+            right: -500px; /* Изначально скрыта справа */
             transform: translateY(-50%);
             transition: right 0.5s ease-in-out;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 183, 50, 0.2);
-            z-index: 3;
-            max-height: 80vh;
-            overflow-y: auto;
+            backdrop-filter: blur(8px);
         }
 
         .bio-card-details h2 {
-            font-size: 24px;
+            font-size: 22px;
             margin: 10px 0;
-            color: #ffb732;
         }
 
         .bio-card-details p {
             font-size: 16px;
             margin: 5px 0;
-            border: none;
-            animation: none;
-            white-space: normal;
-        }
-
-        .bio-card-details strong {
-            color: #ffb732;
         }
 
         /* Кнопка для открытия второй карты */
         .show-details-btn {
-            background: rgba(255, 183, 50, 0.1);
-            border: 1px solid rgba(255, 183, 50, 0.3);
+            background: none;
+            border: none;
             color: white;
-            font-size: 16px;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.3s;
-            padding: 10px 15px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            width: 100%;
+            transition: transform 0.3s;
         }
 
         .show-details-btn:hover {
-            transform: scale(1.02);
-            background: rgba(255, 183, 50, 0.2);
-            border-color: rgba(255, 183, 50, 0.5);
+            transform: scale(1.1);
         }
 
         /* Стили для списка песен */
@@ -389,57 +303,45 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .song-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            transition: background-color 0.3s;
         }
 
         .song-item:hover {
             background-color: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 183, 50, 0.3);
         }
 
         .song-item.active {
             background-color: rgba(29, 185, 84, 0.3);
-            border-color: rgba(29, 185, 84, 0.5);
         }
 
         .song-item img {
             width: 40px;
             height: 40px;
             border-radius: 5px;
-            object-fit: cover;
-            flex-shrink: 0;
         }
 
         .song-item .song-details {
             flex-grow: 1;
-            min-width: 0;
         }
 
         .song-item .song-title {
             font-weight: 600;
             font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .song-item .song-artist {
             font-size: 12px;
             opacity: 0.8;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         /* Индикатор загрузки */
@@ -457,110 +359,23 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Стили для кнопки повтора */
-        .music-player .repeat-btn {
-            color: #cccccc;
-            font-size: 18px;
-            position: relative;
-        }
-
-        .music-player .repeat-btn:hover {
-            color: #ffffff;
-        }
-
-        .music-player .repeat-btn.active {
-            color: #1db954;
-        }
-
-        .music-player .repeat-btn .repeat-tooltip {
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 12px;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            white-space: nowrap;
-            z-index: 10;
-        }
-
-        .music-player .repeat-btn:hover .repeat-tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .bio-card {
-                max-width: 90%;
-                padding: 20px;
-            }
-            
-            .music-player {
-                width: 95%;
-                flex-wrap: wrap;
-                gap: 10px;
-                bottom: 10px;
-            }
-            
-            .music-player .buttons {
-                order: 1;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .music-player .song-info {
-                order: 2;
-                width: 100%;
-            }
-            
-            .bio-card-details {
-                max-width: 90%;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                right: auto;
-                transform: translate(-50%, -50%);
-                display: none;
-            }
-            
-            .bio-card-details.active {
-                display: block;
-            }
-        }
-
-        /* Скрыть полосу прокрутки */
-        ::-webkit-scrollbar {
-            display: none;
-        }
     </style>
 </head>
 <body>
     <!-- Видео фон -->
-    <video id="video-background" autoplay muted loop playsinline>
-        <source src="background.mp4" type="video/mp4">
-        Ваш браузер не поддерживает видео.
+    <video autoplay muted loop class="video-background">
+        <source src="https://pouch.jumpshare.com/preview/v3aJ3xZHsR_oo_0wl-ozhOQy3B0INLNP5u-Ou1Euw5U3p53X-mts5rZyWp67v2Yzbr4TgWybJDjiaZpyg3wNGkOq32RHPWxVcaSVpThr4N5MjP0i8Wvr8toF8NbXHuCZOXeHaUz0sEdANjKO6mN0Tm6yjbN-I2pg_cnoHs_AmgI.mp4" type="video/mp4">
+        Your browser does not support the video tag.
     </video>
-    
-    <!-- Фолбэк фон -->
-    <div class="fallback-bg" id="fallbackBg"></div>
-    
-    <!-- Затемнение для видео -->
-    <div class="overlay"></div>
 
     <!-- Первая био-карта -->
     <div class="bio-card" id="bioCard">
-        <img src="https://i.ibb.co/wZCDM2Yv/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="Profile Image" onerror="this.src='https://via.placeholder.com/120x120/ffb732/000000?text=XD1MPLE'">
-        <h1>xd1mple</h1>
-        <p>Hello, I am xd1mple. I unknown user</p>
+        <img src="https://i.ibb.co/wZCDM2Yv/34170c45f23b2ba71a64486726d0ad6f.jpg" alt="Profile Image">
+        <h1>Avtozill</h1>
+        <p>Hello, I am Avtozill. I developer mc.ApexRise.fun</p>
      
         <div class="social-icons">
+            <a href="https://t.me/avtozill" class="telegram" target="_blank"><i class="fab fa-telegram-plane"></i><span class="tooltip">Telegram</span></a>
             <a href="#" class="info-btn" id="showDetailsBtn"><i class="fas fa-info-circle"></i><span class="tooltip">More Info</span></a>
         </div>
     </div>
@@ -568,30 +383,39 @@
     <!-- Вторая био-карта -->
     <div class="bio-card-details" id="bioCardDetails">
         <h2>About Me</h2>
-        <p><strong>Name:</strong> Senya</p>
-        <p><strong>Profession:</strong> Разработчик</p>
-        <p><strong>Hobbies:</strong> Игры</p>
-        <p><strong>Live:</strong> В России</p>
-        <p><strong>About me:</strong> Разработчик, разрабатываю разные программы, сайты.</p>
+        <p><strong>Name:</strong> Artem</p>
+        <p><strong>Age:</strong> 14</p>
+        <p><strong>Profession:</strong> Developer</p>
+        <p><strong>Hobbies:</strong> Eating, Sleeping, Gaming, Music</p>
+        <p><strong>Live:</strong> in Russia</p>
+        <p><strong>About me:</strong> Junior програмист, начинаю карьеру с обычных серверов. Я картавлю<3</p>
         
         <h3>My Music <span id="loadingIndicator" class="loading" style="display: none;"></span></h3>
         <div class="song-list">
-            <div class="song-item active" data-song="https://storage1.lightaudio.ru/dm/39a0d8a5/3bb50909/YNG%20ERETIK%20%E2%80%94%20%D0%A2%D0%A3%D0%9F%D0%9E%D0%92%D0%90%D0%A2%20%28Speed%20Up%29.mp3" data-image="https://cover.lightaudio.ru/00304a5156ae83404060bf4ea5b17162b7be4abf6e5659795291af50785e4e5a5eaf5441b5a1b96071507041ab78598970715e89b75a6679be4a616e76be999860f25dfcecb44d8cc2a4d2e4d2b27d23534d3bdce2b2.jpg" data-title="туповат (speed up)" data-artist="Yng Eretik">
-                <img src="https://cover.lightaudio.ru/00304a5156ae83404060bf4ea5b17162b7be4abf6e5659795291af50785e4e5a5eaf5441b5a1b96071507041ab78598970715e89b75a6679be4a616e76be999860f25dfcecb44d8cc2a4d2e4d2b27d23534d3bdce2b2.jpg" alt="Song 1">
+            <div class="song-item active" data-song="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" data-image="https://via.placeholder.com/40/1db954/ffffff?text=1" data-title="SoundHelix Song 1" data-artist="SoundHelix">
+                <img src="https://via.placeholder.com/40/1db954/ffffff?text=1" alt="Song 1">
                 <div class="song-details">
-                    <div class="song-title">туповат (speed up)</div>
-                    <div class="song-artist">Yng Eretik</div>
+                    <div class="song-title">SoundHelix Song 1</div>
+                    <div class="song-artist">SoundHelix</div>
                 </div>
             </div>
-            <div class="song-item" data-song="https://storage6.lightaudio.ru/dm/39922462/8f8b22aa/%D0%A0%D0%B0%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%92%D1%8B%D1%85%D1%83%D1%85%D0%BE%D0%BB%D1%8C%20%E2%80%94%20%D0%A1%D0%B0%D0%B9%D1%82.mp3" data-image="https://cover.lightaudio.ru/00304a51568e894e85a5755e4970715c72be495950bbb1bf60716c79998b616966b949655e559fb1566e935166444659766856758965937abe4a616e76ae81959060f25dfcecb44d8cc2a4d2e4d2b27d534d3bdce2b2.jpg" data-title="сайт" data-artist="Раковая Выхухоль">
-                <img src="https://cover.lightaudio.ru/00304a51568e894e85a5755e4970715c72be495950bbb1bf60716c79998b616966b949655e559fb1566e935166444659766856758965937abe4a616e76ae81959060f25dfcecb44d8cc2a4d2e4d2b27d534d3bdce2b2.jpg" alt="Song 2">
+            <div class="song-item" data-song="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" data-image="https://via.placeholder.com/40/ffb732/ffffff?text=2" data-title="SoundHelix Song 2" data-artist="SoundHelix">
+                <img src="https://via.placeholder.com/40/ffb732/ffffff?text=2" alt="Song 2">
                 <div class="song-details">
-                    <div class="song-title">сайт</div>
-                    <div class="song-artist">Раковая Выхухоль</div>
+                    <div class="song-title">SoundHelix Song 2</div>
+                    <div class="song-artist">SoundHelix</div>
+                </div>
+            </div>
+            <div class="song-item" data-song="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" data-image="https://via.placeholder.com/40/5865F2/ffffff?text=3" data-title="SoundHelix Song 3" data-artist="SoundHelix">
+                <img src="https://via.placeholder.com/40/5865F2/ffffff?text=3" alt="Song 3">
+                <div class="song-details">
+                    <div class="song-title">SoundHelix Song 3</div>
+                    <div class="song-artist">SoundHelix</div>
                 </div>
             </div>
         </div>
         
+        <p><strong> </strong> ㅤ</p>
         <button class="show-details-btn" id="hideDetailsBtn">
             <i class="fas fa-arrow-left"></i> Hide Details
         </button>
@@ -599,10 +423,10 @@
 
     <!-- Музыкальный плеер -->
     <div class="music-player" id="musicPlayer">
-        <img src="https://cover.lightaudio.ru/00304a5156ae83404060bf4ea5b17162b7be4abf6e5659795291af50785e4e5a5eaf5441b5a1b96071507041ab78598970715e89b75a6679be4a616e76be999860f25dfcecb44d8cc2a4d2e4d2b27d23534d3bdce2b2.jpg" alt="Song Image" id="currentSongImage">
+        <img src="https://via.placeholder.com/50/1db954/ffffff?text=1" alt="Song Image" id="currentSongImage">
         <div class="song-info">
-            <p id="currentSongTitle">туповат (speed up)</p>
-            <p id="currentSongArtist">Yng Eretik</p>
+            <p id="currentSongTitle">SoundHelix Song 1</p>
+            <p id="currentSongArtist">SoundHelix</p>
             <div class="progress-container">
                 <input type="range" id="songProgress" value="0" max="100">
             </div>
@@ -611,16 +435,12 @@
             <button id="prevBtn" class="prev-btn" title="Previous song"><i class="fas fa-step-backward"></i></button>
             <button id="playPauseBtn" class="play-btn"><i class="fas fa-play"></i></button>
             <button id="nextBtn" class="next-btn" title="Next song"><i class="fas fa-step-forward"></i></button>
-            <button id="repeatBtn" class="repeat-btn" title="Repeat: Off">
-                <i class="fas fa-redo"></i>
-                <span class="repeat-tooltip">Repeat: Off</span>
-            </button>
             <button id="muteBtn" class="mute-btn"><i class="fas fa-volume-up"></i></button>
         </div>
     </div>
 
     <!-- Аудио -->
-    <audio id="audioPlayer" src="https://storage1.lightaudio.ru/dm/39a0d8a5/3bb50909/YNG%20ERETIK%20%E2%80%94%20%D0%A2%D0%A3%D0%9F%D0%9E%D0%92%D0%90%D0%A2%20%28Speed%20Up%29.mp3"></audio>
+    <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
     <script>
         const audioPlayer = document.getElementById('audioPlayer');
@@ -628,58 +448,17 @@
         const muteBtn = document.getElementById('muteBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const repeatBtn = document.getElementById('repeatBtn');
         const songProgress = document.getElementById('songProgress');
         const bioCard = document.getElementById('bioCard');
         const currentSongImage = document.getElementById('currentSongImage');
         const currentSongTitle = document.getElementById('currentSongTitle');
         const currentSongArtist = document.getElementById('currentSongArtist');
         const loadingIndicator = document.getElementById('loadingIndicator');
-        const videoBackground = document.getElementById('video-background');
-        const fallbackBg = document.getElementById('fallbackBg');
-        const showDetailsBtn = document.getElementById('showDetailsBtn');
-        const hideDetailsBtn = document.getElementById('hideDetailsBtn');
-        const bioCardDetails = document.getElementById('bioCardDetails');
         
         // Список песен
         const songItems = document.querySelectorAll('.song-item');
         let currentSongIndex = 0;
         let wasPlaying = false;
-        
-        // Режимы повтора
-        const REPEAT_MODES = {
-            OFF: 0,
-            ONE: 1,
-            ALL: 2
-        };
-        
-        let repeatMode = REPEAT_MODES.OFF;
-
-        // Проверка видео
-        videoBackground.addEventListener('loadeddata', function() {
-            console.log('Video loaded successfully');
-            videoBackground.play().catch(e => {
-                console.log('Autoplay prevented:', e);
-            });
-        });
-
-        videoBackground.addEventListener('error', function(e) {
-            console.error('Video loading error:', e);
-            showFallbackBackground();
-        });
-
-        // Проверка через 2 секунды
-        setTimeout(() => {
-            if (videoBackground.readyState < 2) {
-                console.warn('Video not loaded after 2 seconds');
-                showFallbackBackground();
-            }
-        }, 2000);
-
-        function showFallbackBackground() {
-            console.log('Showing fallback background');
-            fallbackBg.style.display = 'block';
-        }
 
         // Воспроизведение / пауза музыки
         playPauseBtn.addEventListener('click', () => {
@@ -717,33 +496,6 @@
             const nextIndex = (currentSongIndex + 1) % songItems.length;
             changeSong(nextIndex);
         });
-
-        // Кнопка повтора
-        repeatBtn.addEventListener('click', () => {
-            // Переключаем режимы повтора
-            repeatMode = (repeatMode + 1) % 3;
-            
-            // Обновляем иконку и подсказку
-            updateRepeatButton();
-        });
-
-        // Обновление кнопки повтора
-        function updateRepeatButton() {
-            switch(repeatMode) {
-                case REPEAT_MODES.OFF:
-                    repeatBtn.innerHTML = '<i class="fas fa-redo"></i><span class="repeat-tooltip">Repeat: Off</span>';
-                    repeatBtn.classList.remove('active');
-                    break;
-                case REPEAT_MODES.ONE:
-                    repeatBtn.innerHTML = '<i class="fas fa-redo"></i><span class="repeat-tooltip">Repeat: One</span>';
-                    repeatBtn.classList.add('active');
-                    break;
-                case REPEAT_MODES.ALL:
-                    repeatBtn.innerHTML = '<i class="fas fa-redo"></i><span class="repeat-tooltip">Repeat: All</span>';
-                    repeatBtn.classList.add('active');
-                    break;
-            }
-        }
 
         // Эффект наклона при наведении на био-карту
         bioCard.addEventListener('mousemove', (event) => {
@@ -786,6 +538,10 @@
         });
 
         // Открытие второй био-карты
+        const showDetailsBtn = document.getElementById('showDetailsBtn');
+        const hideDetailsBtn = document.getElementById('hideDetailsBtn');
+        const bioCardDetails = document.getElementById('bioCardDetails');
+
         showDetailsBtn.addEventListener('click', () => {
             bioCardDetails.style.right = '20px';
         });
@@ -860,64 +616,26 @@
 
         // Автоматическое переключение на следующую песню
         audioPlayer.addEventListener('ended', () => {
-            switch(repeatMode) {
-                case REPEAT_MODES.ONE:
-                    audioPlayer.currentTime = 0;
-                    audioPlayer.play();
-                    break;
-                case REPEAT_MODES.ALL:
-                    const nextIndex = (currentSongIndex + 1) % songItems.length;
-                    changeSong(nextIndex);
-                    
-                    setTimeout(() => {
-                        if (audioPlayer.paused) {
-                            audioPlayer.play().then(() => {
-                                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                            }).catch(error => {
-                                console.log('Autoplay prevented:', error);
-                            });
-                        }
-                    }, 100);
-                    break;
-                case REPEAT_MODES.OFF:
-                default:
-                    if (currentSongIndex < songItems.length - 1) {
-                        const nextIndex = currentSongIndex + 1;
-                        changeSong(nextIndex);
-                        
-                        setTimeout(() => {
-                            if (audioPlayer.paused) {
-                                audioPlayer.play().then(() => {
-                                    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                                }).catch(error => {
-                                    console.log('Autoplay prevented:', error);
-                                });
-                            }
-                        }, 100);
-                    } else {
-                        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    }
-                    break;
-            }
+            const nextIndex = (currentSongIndex + 1) % songItems.length;
+            changeSong(nextIndex);
         });
 
-        // Горячие клавиши
+        // Горячие клавиши для управления музыкой
         document.addEventListener('keydown', (event) => {
+            // Пробел - воспроизведение/пауза
             if (event.code === 'Space' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 playPauseBtn.click();
             }
+            // Стрелка влево - предыдущая песня
             else if (event.code === 'ArrowLeft' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 prevBtn.click();
             }
+            // Стрелка вправо - следующая песня
             else if (event.code === 'ArrowRight' && !event.target.matches('input, button, a')) {
                 event.preventDefault();
                 nextBtn.click();
-            }
-            else if (event.code === 'KeyR' && !event.target.matches('input, button, a')) {
-                event.preventDefault();
-                repeatBtn.click();
             }
         });
 
@@ -928,16 +646,17 @@
             loadingIndicator.style.display = 'none';
             playPauseBtn.disabled = false;
             
+            // Показываем сообщение об ошибке
             currentSongTitle.textContent = 'Error loading song';
             currentSongArtist.textContent = 'Please try again';
         });
 
-        // Индикатор загрузки
+        // Индикатор загрузки при первом запуске
         audioPlayer.addEventListener('loadstart', () => {
             loadingIndicator.style.display = 'inline-block';
         });
 
-        // Предзагрузка следующей песни
+        // Предзагрузка следующей песни для плавного переключения
         function preloadNextSong() {
             const nextIndex = (currentSongIndex + 1) % songItems.length;
             const nextSong = songItems[nextIndex].getAttribute('data-song');
@@ -946,16 +665,8 @@
             preloadAudio.load();
         }
 
+        // Начинаем предзагрузку
         preloadNextSong();
-        
-        // Убедимся, что видео воспроизводится
-        setTimeout(() => {
-            if (videoBackground.paused) {
-                videoBackground.play().catch(e => {
-                    console.log('Video play failed:', e);
-                });
-            }
-        }, 1000);
     </script>
 </body>
 </html>
